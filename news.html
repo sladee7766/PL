@@ -7,21 +7,56 @@
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
-        <div class="about-me-wrapper"><a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
-            <div class="about-me-dropdown"><div class="social-links"><a href="#">TikTok</a><a href="#">Instagram</a><a href="#">YouTube</a></div></div>
+        <nav>
+            <ul>
+                <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
+                <li><a href="news.html" data-i18n="nav_news">News</a></li>
+                <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+            </ul>
+        </nav>
+        <div class="about-me-wrapper">
+            <a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+            <div class="about-me-dropdown" id="aboutMeDropdown">
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@sladee7766" target="_blank">TikTok</a>
+                    <a href="https://www.instagram.com/sladee7766" target="_blank">Instagram</a>
+                    <a href="https://www.youtube.com/@sladee7766" target="_blank">YouTube</a>
+                </div>
+            </div>
         </div>
     </header>
-    <main class="home-main"><div class="welcome-banner"><h1 data-i18n="news_header">News</h1></div><div id="newsTimeline" class="news-timeline"></div></main>
-    <div id="articleOverlay" class="article-overlay"><button class="article-close-btn" onclick="closeArt()">&times;</button><div class="article-container"><h1 id="artTitle"></h1><p id="artDate" style="color:#888; margin-bottom:20px;"></p><div id="artBody"></div></div></div>
-    <div class="settings-container"><button class="settings-btn" id="settingsBtn">⚙</button><div class="settings-panel"><button class="lang-btn" onclick="changeLanguage('en')">English</button><button class="lang-btn" onclick="changeLanguage('tr')">Türkçe</button></div></div>
-    <script src="lineups.js"></script><script src="news_data.js"></script><script src="script.js"></script>
+
+    <main class="home-main">
+        <div class="welcome-banner"><h1 data-i18n="news_header">Latest News</h1></div>
+        <div id="newsTimeline" class="news-timeline"></div>
+    </main>
+
+    <div id="articleOverlay" class="article-overlay">
+        <button class="article-close-btn" onclick="closeArt()">&times;</button>
+        <div class="article-container">
+            <h1 id="artTitle" style="color:var(--accent-gold); margin-bottom:10px;"></h1>
+            <p id="artDate" style="color:#888; margin-bottom:20px; border-bottom:1px solid var(--panel-border); padding-bottom:10px;"></p>
+            <div id="artBody"></div>
+        </div>
+    </div>
+
+    <!-- SETTINGS BLOCK -->
+    <div class="settings-container">
+        <button class="settings-btn" id="settingsBtn">⚙</button>
+        <div class="settings-panel" id="settingsPanel">
+            <h4 data-i18n="settings_title" style="margin-bottom:10px; color:var(--primary-color);">Settings</h4>
+            <button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
+            <button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
+        </div>
+    </div>
+
+    <script src="news_data.js"></script><script src="script.js"></script>
     <script>
-        function render() {
+        function renderNewsPage() {
             const c = document.getElementById('newsTimeline'), l = localStorage.getItem('app_lang') || 'en';
-            newsData.sort((a,b)=>b.id-a.id).forEach(art => {
+            [...newsData].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(art => {
                 const r = document.createElement('div'); r.className = 'news-row'; r.onclick = () => openArt(art);
-                r.innerHTML = `<img src="${art.thumbnail}" class="news-thumb"><div class="news-info"><span class="badge ${art.type}">${art.type}</span><h2 class="news-title">${art.title[l]}</h2><span class="news-read-btn" data-i18n="read_more">Read More</span></div>`;
+                r.innerHTML = `<img src="${art.thumbnail}" class="news-thumb"><div class="news-info"><span class="badge ${art.type}">${art.type.toUpperCase()}</span><h2 style="font-size:22px; color:white; margin:10px 0;">${art.title[l]}</h2><span style="color:var(--primary-color); font-weight:bold; font-size:14px;" data-i18n="read_more">${translations[l].read_more} &rarr;</span></div>`;
                 c.appendChild(r);
             });
         }
@@ -29,14 +64,14 @@
             const l = localStorage.getItem('app_lang') || 'en', b = document.getElementById('artBody');
             document.getElementById('artTitle').innerText = art.title[l]; document.getElementById('artDate').innerText = art.date;
             b.innerHTML = ""; art.content.forEach(bl => {
-                if(bl.type==='text') b.innerHTML += `<p class="article-text">${bl[l]}</p>`;
-                else if(bl.type==='image') b.innerHTML += `<img src="${bl.url}" class="article-image">`;
+                if(bl.type==='text') b.innerHTML += `<p style="line-height:1.8; font-size:16px; margin-bottom:20px; color:white;">${bl[l]}</p>`;
+                else if(bl.type==='image') b.innerHTML += `<img src="${bl.url}" style="width:100%; border-radius:10px; margin-bottom:20px;">`;
                 else if(bl.type==='video') b.innerHTML += `<div class="iframe-wrapper"><iframe src="${bl.url}" allowfullscreen></iframe></div>`;
             });
             document.getElementById('articleOverlay').classList.add('active');
         }
-        function closeArt() { document.getElementById('articleOverlay').classList.remove('active'); }
-        window.onload = render;
+        function closeArt() { document.getElementById('articleOverlay').classList.remove('active'); document.getElementById('artBody').innerHTML = ""; }
+        window.onload = renderNewsPage;
     </script>
 </body>
 </html>
