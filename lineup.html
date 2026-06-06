@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pl - Lineup Viewer</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
+        <nav><ul>
+            <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
+            <li><a href="news.html" data-i18n="nav_news">News</a></li>
+            <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+        </ul></nav>
+        <div class="about-me-wrapper"><a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+            <div class="about-me-dropdown" id="aboutMeDropdown">
+                <div class="social-links"><a href="#">TikTok</a><a href="#">Instagram</a><a href="#">YouTube</a></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="viewer-container">
+        <aside class="selection-sidebar">
+            <div class="sidebar-section"><label class="section-title" data-i18n="sel_map">Map</label><div class="map-list" id="mapList"></div></div>
+            <div class="sidebar-section"><label class="section-title" data-i18n="sel_agent">Agent</label><div class="agent-grid" id="agentGrid"></div></div>
+        </aside>
+
+        <main class="map-area">
+            <div class="map-wrapper" id="mapWrapper">
+                <div id="mapContent" class="map-content">
+                    <img src="maps/ascent.png" id="mainMapImg" draggable="false">
+                    <svg id="lineLayer" viewBox="0 0 100 100" preserveAspectRatio="none" style="width:100%; height:100%; position:absolute; top:0; left:0;"></svg>
+                    <div id="dotLayer"></div>
+                </div>
+                <button class="reset-zoom-btn" onclick="resetView()" data-i18n="reset_view">Reset</button>
+                <div class="ability-bar" id="abilityBar"></div>
+            </div>
+        </main>
+
+        <aside class="video-sidebar" id="videoSidebar">
+            <h3 data-i18n="preview_title">Preview</h3>
+            <div id="videoDisplay"></div>
+        </aside>
+    </div>
+
+    <div class="settings-container">
+        <button class="settings-btn" id="settingsBtn">⚙</button>
+        <div class="settings-panel" id="settingsPanel">
+            <button class="lang-btn" onclick="changeLanguage('en')">English</button>
+            <button class="lang-btn" onclick="changeLanguage('tr')">Türkçe</button>
+        </div>
+    </div>
+
+    <script src="lineups.js"></script><script src="script.js"></script>
+    <script>
+        let currentMap = "ascent", currentAgent = "sova", currentAbility = "Recon";
+        let scale = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY, moved = false, activeLineup = null;
+
+        const mapWrapper = document.getElementById('mapWrapper'), mapContent = document.getElementById('mapContent'), mainMapImg = document.getElementById('mainMapImg'), videoSidebar = document.getElementById('videoSidebar');
+
+        function initLineupPage() {
+            mainMapImg.onload = () => { resetView(); updateDotsAndList(); };
+            renderMaps(); renderAgents(); setupPanAndZoom();
+            mapWrapper.addEventListener('click', (e) => { if(!moved && (e.target === mapWrapper || e.target === mapContent || e.target === mainMapImg)) resetView(); });
+
+            const params = new URLSearchParams(window.location.search);
+            if(params.has('agent')) {
+                currentMap = params.get('map'); currentAgent = params.get('agent'); currentAbility = params.get('ability');
+                renderMaps(); renderAgents(); renderAbilities();
+                mainMapImg.onload = () => { updateDotsAndList(); const f = lineupData.find(l => l.title === params.get('title')); if(f) selectTargetGroup(lineupData.filter(x => x.target.x === f.target.x && x.target.y === f.target.y), null, f); };
+            }
+        }
+
+        function setupPanAndZoom() {
+            mapWrapper.addEventListener('mousedown', (e) => { if(e.target.closest('.map-dot') || e.shiftKey) return; isDragging = true; moved = false; startX = e.clientX - translateX; startY = e.clientY - translateY; });
+            window.addEventListener('mousemove', (e) => { if(!isDragging) return; moved = true; translateX = e.clientX - startX; translateY = e.clientY - startY; applyTransform(); });
+            window.addEventListener('mouseup', () => isDragging = false);
+            mapWrapper.addEventListener('wheel', (e) => { e.preventDefault(); let d = e.deltaY < 0 ? 1.1 : 0.9; let ns = Math.min(Math.max(1, scale * d), 5); let r = mapWrapper.getBoundingClientRect(); translateX = (e.clientX - r.left) - ((e.clientX - r.left) - translateX) * (ns / scale); translateY = (e.clientY - r.top) - ((e.clientY - r.top) - translateY) * (ns / scale); scale = ns; applyTransform(); }, {passive:false});
+        }
+
+        function applyTransform() { mapContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`; }
+        
+        function resetView() {
+            scale = 1; let r = mapWrapper.getBoundingClientRect();
+            translateX = (r.width / 2) - (mainMapImg.offsetWidth / 2);
+            translateY = (r.height / 2) - (mainMapImg.offsetHeight / 2);
+            mapContent.style.transition = 'transform 0.4s ease-out'; applyTransform();
+            setTimeout(() => mapContent.style.transition = 'none', 400);
+            activeLineup = null; videoSidebar.classList.remove('active'); updateDotsAndList();
+        }
+
+        function centerOnTarget(x, y) {
+            scale = 2.5; let r = mapWrapper.getBoundingClientRect();
+            translateX = (r.width / 2) - ((x / 100) * mainMapImg.offsetWidth * scale);
+            translateY = (r.height / 2) - ((y / 100) * mainMapImg.offsetHeight * scale);
+            mapContent.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'; applyTransform();
+            setTimeout(() => mapContent.style.transition = 'none', 600);
+        }
+
+        function renderMaps() { let l = document.getElementById('mapList'); l.innerHTML = ""; maps.forEach(m => { let b = document.createElement('div'); b.className = `map-banner ${m === currentMap ? 'active' : ''}`; b.style.backgroundImage = `url('map_backgrounds/${m}.jpg')`; b.innerHTML = `<span>${m}</span>`; b.onclick = () => { currentMap = m; resetView(); updateMap(); renderMaps(); }; l.appendChild(b); }); }
+        function renderAgents() { let g = document.getElementById('agentGrid'); g.innerHTML = ""; agents.forEach(a => { let i = document.createElement('img'); i.src = `agents/${a}.png`; i.className = `agent-icon ${a === currentAgent ? 'active' : ''}`; i.onclick = () => { currentAgent = a; currentAbility = abilityIcons[a][0]; resetView(); renderAgents(); renderAbilities(); updateDotsAndList(); }; g.appendChild(i); }); renderAbilities(); }
+        function renderAbilities() { let b = document.getElementById('abilityBar'); b.innerHTML = ""; (abilityIcons[currentAgent] || []).forEach(ab => { let btn = document.createElement('button'); btn.innerText = ab; btn.className = `ability-btn ${ab === currentAbility ? 'active' : ''}`; btn.onclick = (e) => { e.stopPropagation(); currentAbility = ab; renderAbilities(); updateDotsAndList(); }; b.appendChild(btn); }); }
+        function updateMap() { mainMapImg.src = `maps/${currentMap}.png`; }
+
+        function updateDotsAndList() {
+            let dl = document.getElementById('dotLayer'), ll = document.getElementById('lineLayer'); dl.innerHTML = ""; ll.innerHTML = "";
+            let filtered = lineupData.filter(l => l.map === currentMap && l.agent === currentAgent && l.ability === currentAbility);
+            let grouped = {}; filtered.forEach(l => { let k = `${l.target.x}_${l.target.y}`; if(!grouped[k]) grouped[k] = []; grouped[k].push(l); });
+            Object.values(grouped).forEach(group => {
+                let d = document.createElement('div'); d.className = 'map-dot target-dot'; d.style.left = group[0].target.x + "%"; d.style.top = group[0].target.y + "%";
+                if(group.length > 1) d.innerHTML = `<span class="badge-count">${group.length}</span>`;
+                d.onclick = (e) => { e.stopPropagation(); selectTargetGroup(group, d); }; dl.appendChild(d);
+            });
+        }
+
+        function selectTargetGroup(group, dotEl, deep = null) {
+            document.querySelectorAll('.target-dot').forEach(d => d.classList.remove('active-target'));
+            if(dotEl) dotEl.classList.add('active-target');
+            document.querySelectorAll('.origin-dot').forEach(d => d.remove()); document.getElementById('lineLayer').innerHTML = "";
+            group.forEach((l) => {
+                let o = document.createElement('div'); o.className = 'map-dot origin-dot'; o.style.left = l.origin.x + "%"; o.style.top = l.origin.y + "%"; o.style.backgroundImage = `url('agents/${l.agent}.png')`; document.getElementById('dotLayer').appendChild(o);
+                let dPath = `M ${l.origin.x} ${l.origin.y} L ${l.target.x} ${l.target.y}`;
+                let pg = document.createElementNS("http://www.w3.org/2000/svg", "g");
+                let line = document.createElementNS("http://www.w3.org/2000/svg", "path"); line.setAttribute("d", dPath); line.setAttribute("class", "trajectory-line");
+                let part = document.createElementNS("http://www.w3.org/2000/svg", "circle"); part.setAttribute("class", "trajectory-particle flow-animation"); part.style.offsetPath = `path('${dPath}')`;
+                pg.appendChild(line); pg.appendChild(part); document.getElementById('lineLayer').appendChild(pg);
+                o.onclick = (e) => { e.stopPropagation(); if(activeLineup === l) { videoSidebar.classList.toggle('active'); } else { activeLineup = l; document.querySelectorAll('.trajectory-line').forEach(x => x.classList.remove('active')); line.classList.add('active'); videoSidebar.classList.add('active'); document.getElementById('videoDisplay').innerHTML = `<div><h4 style="color:var(--accent-gold);margin-bottom:10px;">${l.title}</h4><div class="iframe-wrapper"><iframe src="${l.video}" allowfullscreen></iframe></div></div>`; } };
+                if(deep && l.title === deep.title) o.click();
+            });
+            centerOnTarget(group[0].target.x, group[0].target.y);
+        }
+        window.onload = initLineupPage;
+    </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pl - Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <a href="main.html"><img src="picture/logo.png" alt="Logo" class="logo"></a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
+                <li><a href="news.html" data-i18n="nav_news">News</a></li>
+                <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+            </ul>
+        </nav>
+        <div class="about-me-wrapper">
+            <a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+            <div class="about-me-dropdown" id="aboutMeDropdown">
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@sladee7766" target="_blank"><span>TikTok</span></a>
+                    <a href="https://www.instagram.com/sladee7766" target="_blank"><span>Instagram</span></a>
+                    <a href="https://www.youtube.com/@sladee7766" target="_blank"><span>YouTube</span></a>
+                </div>
+                <p class="username">@sladee7766</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="home-main">
+        <div class="welcome-banner">
+            <h1 data-i18n="welcome_title">Welcome to Pl</h1>
+            <p data-i18n="welcome_desc">Professional Valorant tactical data and lineups.</p>
+        </div>
+
+        <section class="recommendations-section">
+            <h2 data-i18n="rec_title" style="margin-bottom:20px;">Recommended</h2>
+            <div id="recommendations-container" class="recommendations-grid">
+                <!-- JS will inject up to 12 random items here -->
+            </div>
+        </section>
+
+        <!-- BETA VERSION TAG -->
+        <footer style="margin-top: 50px; text-align: center; padding-bottom: 20px;">
+            <p style="font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 2px; font-weight: bold;">BETA BUİLD v1.0.0</p>
+        </footer>
+    </main>
+
+    <div class="settings-container">
+        <button class="settings-btn" id="settingsBtn">⚙</button>
+        <div class="settings-panel" id="settingsPanel">
+            <h4 data-i18n="settings_title" style="margin-bottom:10px;">Settings</h4>
+            <button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
+            <button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
+        </div>
+    </div>
+
+    <script src="lineups.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
