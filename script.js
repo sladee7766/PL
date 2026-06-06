@@ -4,14 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const aboutMeBtn = document.getElementById('aboutMeBtn');
     const aboutMeDropdown = document.getElementById('aboutMeDropdown');
-    if (aboutMeBtn && aboutMeDropdown) {
+    if (aboutMeBtn) {
         aboutMeBtn.onclick = (e) => { e.preventDefault(); aboutMeDropdown.classList.toggle('show'); };
         document.addEventListener('click', (e) => { if (!aboutMeBtn.contains(e.target)) aboutMeDropdown.classList.remove('show'); });
     }
 
     const settingsBtn = document.getElementById('settingsBtn');
     const settingsPanel = document.getElementById('settingsPanel');
-    if (settingsBtn && settingsPanel) {
+    if (settingsBtn) {
         settingsBtn.onclick = (e) => { e.stopPropagation(); settingsPanel.classList.toggle('active'); };
         document.addEventListener('click', (e) => { if (!settingsPanel.contains(e.target)) settingsPanel.classList.remove('active'); });
     }
@@ -25,14 +25,20 @@ const translations = {
         welcome_title: "Welcome to Pl", welcome_desc: "Professional Valorant tactical data.",
         rec_title: "Recommended", come_back: "Come back later!", settings_title: "Settings",
         reset_view: "Reset View", sel_map: "Map", sel_agent: "Agent", preview_title: "Lineup Preview", 
-        go_back: "Go Back Home", lang_label: "Language", news_header: "Latest News"
+        go_back: "Go Back Home", lang_label: "Language", news_header: "Latest News",
+        search_placeholder: "Search Agent...", side_label: "Side", side_all: "All", 
+        side_atk: "Attack", side_def: "Defense", diff_label: "Difficulty",
+        easy: "Easy", medium: "Medium", hard: "Hard", copy_link: "Copy Link", link_copied: "Copied!", read_more: "Read Article"
     },
     tr: {
         nav_lineups: "Lineuplar", nav_news: "Haberler", nav_videos: "Videolar", nav_about: "Hakkımda",
         welcome_title: "Pl'ye Hoş Geldiniz", welcome_desc: "Profesyonel Valorant taktik verileri.",
         rec_title: "Önerilenler", come_back: "Daha sonra tekrar gel!", settings_title: "Ayarlar",
-        reset_view: "Görünümü Sıfırla", sel_map: "Harita Seç", sel_agent: "Ajan Seç", preview_title: "Lineup Önizleme", 
-        go_back: "Geri Dön", lang_label: "Dil", news_header: "Son Haberler"
+        reset_view: "Sıfırla", sel_map: "Harita Seç", sel_agent: "Ajan Seç", preview_title: "Lineup Önizleme", 
+        go_back: "Geri Dön", lang_label: "Dil", news_header: "Son Haberler",
+        search_placeholder: "Ajan Ara...", side_label: "Taraf", side_all: "Hepsi", 
+        side_atk: "Saldırı", side_def: "Savunma", diff_label: "Zorluk",
+        easy: "Kolay", medium: "Orta", hard: "Zor", copy_link: "Linki Kopyala", link_copied: "Kopyalandı!", read_more: "Haberi Oku"
     }
 };
 
@@ -42,7 +48,10 @@ function applyLanguage(lang) {
     const dict = translations[lang];
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (dict[key]) el.textContent = dict[key];
+        if (dict[key]) {
+            if (el.tagName === 'INPUT') el.placeholder = dict[key];
+            else el.textContent = dict[key];
+        }
     });
 }
 
