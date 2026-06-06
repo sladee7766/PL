@@ -1,17 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"><title>Pl - Videos</title><link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pl - Videos</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
-        <div class="about-me-wrapper"><a href="main.html" class="about-me-button" data-i18n="go_back">Back</a></div>
+        <nav>
+            <ul>
+                <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
+                <li><a href="news.html" data-i18n="nav_news">News</a></li>
+                <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
+            </ul>
+        </nav>
+        <div class="about-me-wrapper">
+            <a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+            <div class="about-me-dropdown" id="aboutMeDropdown">
+                <div class="social-links">
+                    <a href="https://www.tiktok.com/@sladee7766" target="_blank">TikTok</a>
+                    <a href="https://www.instagram.com/sladee7766" target="_blank">Instagram</a>
+                    <a href="https://www.youtube.com/@sladee7766" target="_blank">YouTube</a>
+                </div>
+            </div>
+        </div>
     </header>
+
     <main style="text-align: center; padding-top: 150px;">
-        <h1 data-i18n="come_back">Coming Soon</h1>
+        <div class="welcome-banner" style="display:inline-block;"><h1 data-i18n="come_back">Coming Soon</h1></div>
     </main>
-    <script src="lineups.js"></script><script src="script.js"></script>
+
+    <!-- SETTINGS BLOCK -->
+    <div class="settings-container">
+        <button class="settings-btn" id="settingsBtn">⚙</button>
+        <div class="settings-panel" id="settingsPanel">
+            <h4 data-i18n="settings_title" style="margin-bottom:10px; color:var(--primary-color);">Settings</h4>
+            <button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
+            <button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
