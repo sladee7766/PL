@@ -2,53 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pl - Tactical Lineups</title><link rel="stylesheet" href="style.css">
+    <title>Pl - Viewer</title><link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav>
-            <ul>
-                <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
-                <li><a href="news.html" data-i18n="nav_news">News</a></li>
-                <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
-            </ul>
-        </nav>
-        <div class="about-me-wrapper">
-            <a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
-            <div class="about-me-dropdown" id="aboutMeDropdown">
-                <div class="social-links">
-                    <a href="https://www.tiktok.com/@sladee7766" target="_blank">TikTok</a>
-                    <a href="https://www.instagram.com/sladee7766" target="_blank">Instagram</a>
-                    <a href="https://www.youtube.com/@sladee7766" target="_blank">YouTube</a>
-                </div>
-                <p style="text-align:center; font-size:12px; color:var(--primary-color); margin-top:5px;">@sladee7766</p>
-            </div>
+        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
+        <div class="about-me-wrapper"><a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+            <div class="about-me-dropdown" id="aboutMeDropdown"><div class="social-links"><a href="https://www.tiktok.com/@sladee7766" target="_blank">TikTok</a><a href="https://www.instagram.com/sladee7766" target="_blank">Instagram</a><a href="https://www.youtube.com/@sladee7766" target="_blank">YouTube</a></div></div>
         </div>
     </header>
 
     <div class="viewer-container">
         <aside class="selection-sidebar">
             <div class="sidebar-section"><label class="section-title" data-i18n="sel_map">Map</label><div class="map-list" id="mapList"></div></div>
-            <div class="sidebar-section">
-                <label class="section-title" data-i18n="side_label">Side</label>
+            <div class="sidebar-section"><label class="section-title" data-i18n="side_label">Side</label>
                 <div class="side-toggle">
                     <button class="side-btn active" onclick="setSide('all', this)" data-i18n="side_all">All</button>
                     <button class="side-btn" onclick="setSide('attack', this)" data-i18n="side_atk">Attack</button>
                     <button class="side-btn" onclick="setSide('defense', this)" data-i18n="side_def">Defense</button>
                 </div>
             </div>
-            <div class="sidebar-section">
-                <label class="section-title" data-i18n="diff_label">Difficulty</label>
-                <select id="diffSelect" class="search-bar" onchange="setDiff()" style="background:rgba(0,0,0,0.5); border:1px solid var(--panel-border); color:white; width:100%; cursor:pointer;">
+            <div class="sidebar-section"><label class="section-title" data-i18n="diff_label">Difficulty</label>
+                <select id="diffSelect" class="search-bar" onchange="setDiff()">
                     <option value="all" data-i18n="side_all">All</option>
                     <option value="easy" data-i18n="easy">Easy</option>
                     <option value="medium" data-i18n="medium">Medium</option>
                     <option value="hard" data-i18n="hard">Hard</option>
                 </select>
             </div>
-            <div class="sidebar-section">
-                <label class="section-title" data-i18n="sel_agent">Agent</label>
+            <div class="sidebar-section"><label class="section-title" data-i18n="sel_agent">Agent</label>
                 <input type="text" id="agentSearch" class="search-bar" data-i18n="search_placeholder" oninput="renderAgents()">
                 <div class="agent-grid" id="agentGrid"></div>
             </div>
@@ -66,47 +49,62 @@
             </div>
         </main>
 
-        <aside class="video-sidebar" id="videoSidebar">
-            <h3 data-i18n="preview_title">Preview</h3>
-            <div id="videoDisplay"></div>
-        </aside>
+        <aside class="video-sidebar" id="videoSidebar"><h3 data-i18n="preview_title">Preview</h3><div id="videoDisplay"></div></aside>
     </div>
 
-    <div id="coordPopup" class="coord-popup">
-        <h3 style="color:white; margin-bottom:10px;">Coords</h3><code id="coordText"></code>
-        <button onclick="document.getElementById('coordPopup').classList.remove('active')">Close</button>
-    </div>
-
-    <!-- SETTINGS BLOCK (MUST BE IDENTICAL ON ALL PAGES) -->
-    <div class="settings-container">
-        <button class="settings-btn" id="settingsBtn">⚙</button>
+    <div class="settings-container"><button class="settings-btn" id="settingsBtn">⚙</button>
         <div class="settings-panel" id="settingsPanel">
             <h4 data-i18n="settings_title" style="margin-bottom:10px; color:var(--primary-color);">Settings</h4>
-            <button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
-            <button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
+            <button class="lang-btn" onclick="changeLanguage('en')">English</button><button class="lang-btn" onclick="changeLanguage('tr')">Türkçe</button>
         </div>
     </div>
 
     <script src="lineups.js"></script><script src="script.js"></script>
     <script>
         let currentMap = "ascent", currentAgent = "sova", currentAbility = "Recon", currentSide = "all", currentDiff = "all";
-        let scale = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY, moved = false, activeLineup = null;
+        let scale = 1, translateX = 0, translateY = 0, isDragging = false, startX, startY, moved = false, activeLineupData = null;
 
         const mapWrapper = document.getElementById('mapWrapper'), mapContent = document.getElementById('mapContent'), mainMapImg = document.getElementById('mainMapImg'), videoSidebar = document.getElementById('videoSidebar');
 
         function initLineupPage() {
-            mainMapImg.onload = () => { resetView(); updateDotsAndList(); };
-            renderMaps(); renderAgents(); setupPanAndZoom();
+            const p = new URLSearchParams(window.location.search);
+            
+            // 1. If deep link exists, set globals first
+            if(p.has('agent')) {
+                currentMap = p.get('map');
+                currentAgent = p.get('agent');
+                currentAbility = p.get('ability');
+            }
+
+            // 2. Load Visuals
+            renderMaps(); 
+            renderAgents(); 
+            setupPanAndZoom();
+
+            // 3. Center and Handle Deep Linking when map image is ready
+            mainMapImg.onload = () => {
+                resetView();
+                updateDotsAndList();
+                
+                if(p.has('title')) {
+                    const f = lineupData.find(l => l.title === p.get('title') && l.map === currentMap);
+                    if(f) {
+                        // Small delay to ensure browser layout engine has settled
+                        setTimeout(() => {
+                            const group = lineupData.filter(x => x.target.x === f.target.x && x.target.y === f.target.y);
+                            selectTargetGroup(group, f);
+                        }, 100);
+                    }
+                }
+            };
+            
+            // If image is already cached
+            if (mainMapImg.complete) mainMapImg.onload();
+
             mapWrapper.addEventListener('click', (e) => { if(!moved && (e.target === mapWrapper || e.target === mapContent || e.target === mainMapImg)) resetView(); });
             mapWrapper.addEventListener('click', (e) => { if(e.shiftKey) { const r = mapContent.getBoundingClientRect(); const x = ((e.clientX - r.left)/r.width)*100, y = ((e.clientY - r.top)/r.height)*100; document.getElementById('coordText').innerText = `target: { x: ${x.toFixed(1)}, y: ${y.toFixed(1)} }`; document.getElementById('coordPopup').classList.add('active'); } });
-            
-            const p = new URLSearchParams(window.location.search);
-            if(p.has('agent')) {
-                currentMap = p.get('map'); currentAgent = p.get('agent'); currentAbility = p.get('ability');
-                renderMaps(); renderAgents(); renderAbilities();
-                mainMapImg.onload = () => { updateDotsAndList(); const f = lineupData.find(l => l.title === p.get('title') && l.map === currentMap); if(f) selectTargetGroup(lineupData.filter(x => x.target.x === f.target.x && x.target.y === f.target.y), null, f); };
-            }
         }
+
         function setupPanAndZoom() {
             mapWrapper.addEventListener('mousedown', (e) => { if(e.target.closest('.map-dot') || e.target.closest('.ability-bar') || e.shiftKey) return; e.preventDefault(); isDragging = true; moved = false; startX = e.clientX - translateX; startY = e.clientY - translateY; });
             window.addEventListener('mousemove', (e) => { if(!isDragging) return; moved = true; translateX = e.clientX - startX; translateY = e.clientY - startY; applyTransform(); });
@@ -114,18 +112,79 @@
             mapWrapper.addEventListener('wheel', (e) => { e.preventDefault(); let d = e.deltaY < 0 ? 1.1 : 0.9; let ns = Math.min(Math.max(1, scale * d), 5); let r = mapWrapper.getBoundingClientRect(); translateX = (e.clientX - r.left) - ((e.clientX - r.left) - translateX) * (ns / scale); translateY = (e.clientY - r.top) - ((e.clientY - r.top) - translateY) * (ns / scale); scale = ns; applyTransform(); }, {passive:false});
         }
         function applyTransform() { mapContent.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`; }
-        function resetView() { scale = 1; let r = mapWrapper.getBoundingClientRect(); translateX = (r.width - mainMapImg.offsetWidth) / 2; translateY = (r.height - mainMapImg.offsetHeight) / 2; mapContent.style.transition = '0.4s ease-out'; applyTransform(); setTimeout(() => mapContent.style.transition = 'none', 400); activeLineup = null; videoSidebar.classList.remove('active'); document.querySelectorAll('.target-dot').forEach(d => d.classList.remove('active-target')); document.getElementById('lineLayer').innerHTML = ""; document.querySelectorAll('.origin-dot').forEach(d => d.remove()); }
-        function centerOnTarget(x, y) { scale = 2.5; let r = mapWrapper.getBoundingClientRect(); translateX = (r.width / 2) - ((x / 100) * mainMapImg.offsetWidth * scale); translateY = (r.height / 2) - ((y / 100) * mainMapImg.offsetHeight * scale); mapContent.style.transition = '0.6s ease'; applyTransform(); setTimeout(() => mapContent.style.transition = 'none', 600); }
+        
+        function resetView() {
+            scale = 1; const r = mapWrapper.getBoundingClientRect();
+            translateX = (r.width - mainMapImg.offsetWidth) / 2;
+            translateY = (r.height - mainMapImg.offsetHeight) / 2;
+            mapContent.style.transition = 'transform 0.4s ease-out'; applyTransform();
+            setTimeout(() => mapContent.style.transition = 'none', 400);
+            activeLineupData = null; videoSidebar.classList.remove('active');
+            updateDotsAndList();
+        }
+
+        function centerOnTarget(x, y) {
+            scale = 2.5; const r = mapWrapper.getBoundingClientRect();
+            translateX = (r.width / 2) - ((x / 100) * mainMapImg.offsetWidth * scale);
+            translateY = (r.height / 2) - ((y / 100) * mainMapImg.offsetHeight * scale);
+            mapContent.style.transition = 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)'; applyTransform();
+            setTimeout(() => mapContent.style.transition = 'none', 600);
+        }
+
         function setSide(s, btn) { currentSide = s; document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); updateDotsAndList(); }
         function setDiff() { currentDiff = document.getElementById('diffSelect').value; updateDotsAndList(); }
         function renderMaps() { let l = document.getElementById('mapList'); l.innerHTML = ""; maps.forEach(m => { let b = document.createElement('div'); b.className = `map-banner ${m === currentMap ? 'active' : ''}`; b.style.backgroundImage = `url('map_backgrounds/${m}.jpg')`; b.innerHTML = `<span>${m}</span>`; b.onclick = () => { currentMap = m; resetView(); updateMap(); renderMaps(); }; l.appendChild(b); }); }
         function renderAgents() { const grid = document.getElementById('agentGrid'), q = document.getElementById('agentSearch').value.toLowerCase(); grid.innerHTML = ""; agents.filter(a => a.includes(q)).forEach(a => { let i = document.createElement('img'); i.src = `agents/${a}.png`; i.className = `agent-icon ${a === currentAgent ? 'active' : ''}`; i.onclick = () => { currentAgent = a; currentAbility = (abilityIcons[a] && abilityIcons[a][0]) || ""; resetView(); renderAgents(); renderAbilities(); updateDotsAndList(); }; grid.appendChild(i); }); renderAbilities(); }
-        function renderAbilities() { let b = document.getElementById('abilityBar'); b.innerHTML = ""; (abilityIcons[currentAgent] || []).forEach(ab => { let btn = document.createElement('button'); btn.innerText = ab; btn.className = `ability-btn ${ab === currentAbility ? 'active' : ''}`; btn.onclick = (e) => { e.stopPropagation(); currentAbility = ab; resetView(); renderAbilities(); updateDotsAndList(); }; b.appendChild(btn); }); }
+        function renderAbilities() { let b = document.getElementById('abilityBar'); b.innerHTML = ""; (abilityIcons[currentAgent] || []).forEach(ab => { let btn = document.createElement('button'); btn.innerText = ab; btn.className = `ability-btn ${ab === currentAbility ? 'active' : ''}`; btn.onclick = (e) => { e.stopPropagation(); currentAbility = ab; renderAbilities(); updateDotsAndList(); }; b.appendChild(btn); }); }
         function updateMap() { mainMapImg.src = `maps/${currentMap}.png`; }
-        function updateDotsAndList() { let dl = document.getElementById('dotLayer'); dl.innerHTML = ""; videoSidebar.classList.remove('active'); document.getElementById('lineLayer').innerHTML = ""; document.querySelectorAll('.origin-dot').forEach(d => d.remove()); let filtered = lineupData.filter(l => l.map === currentMap && l.agent === currentAgent && l.ability === currentAbility && (currentSide === 'all' || l.side === currentSide) && (currentDiff === 'all' || l.difficulty === currentDiff)); let grouped = {}; filtered.forEach(l => { let k = `${l.target.x}_${l.target.y}`; if(!grouped[k]) grouped[k] = []; grouped[k].push(l); }); Object.values(grouped).forEach(group => { let d = document.createElement('div'); d.className = 'map-dot target-dot'; d.style.left = group[0].target.x + "%"; d.style.top = group[0].target.y + "%"; if(group.length > 1) d.innerHTML = `<span class="badge-count">${group.length}</span>`; d.onclick = (e) => { e.stopPropagation(); selectTargetGroup(group, d); }; dl.appendChild(d); }); }
-        function selectTargetGroup(group, dotEl, deep = null) { document.querySelectorAll('.target-dot').forEach(d => d.classList.remove('active-target')); if(dotEl) dotEl.classList.add('active-target'); document.querySelectorAll('.origin-dot').forEach(d => d.remove()); document.getElementById('lineLayer').innerHTML = ""; group.forEach((l) => { let o = document.createElement('div'); o.className = 'map-dot origin-dot'; o.style.left = l.origin.x + "%"; o.style.top = l.origin.y + "%"; o.style.backgroundImage = `url('agents/${l.agent}.png')`; document.getElementById('dotLayer').appendChild(o); let dPath = `M ${l.origin.x} ${l.origin.y} L ${l.target.x} ${l.target.y}`; let pg = document.createElementNS("http://www.w3.org/2000/svg", "g"), ln = document.createElementNS("http://www.w3.org/2000/svg", "path"), prt = document.createElementNS("http://www.w3.org/2000/svg", "circle"); ln.setAttribute("d", dPath); ln.setAttribute("class", "trajectory-line"); prt.setAttribute("class", "trajectory-particle flow-animation"); prt.style.offsetPath = `path('${dPath}')`; pg.appendChild(ln); pg.appendChild(prt); if (l.radius) { let rad = document.createElementNS("http://www.w3.org/2000/svg", "circle"); rad.setAttribute("cx", l.target.x); rad.setAttribute("cy", l.target.y); rad.setAttribute("r", l.radius); rad.setAttribute("class", "impact-radius"); pg.appendChild(rad); } document.getElementById('lineLayer').appendChild(pg); o.onclick = (e) => { e.stopPropagation(); if (activeLineup === l) { videoSidebar.classList.remove('active'); activeLineup = null; ln.classList.remove('active'); o.style.borderColor = "white"; } else { setActiveLineup(l, o, ln); } }; if (deep && l.title === deep.title) setActiveLineup(l, o, ln); }); centerOnTarget(group[0].target.x, group[0].target.y); }
-        function setActiveLineup(l, oEl, lnEl) { const la = localStorage.getItem('app_lang') || 'en'; activeLineup = l; document.querySelectorAll('.origin-dot').forEach(d => { d.style.borderColor = "white"; d.style.boxShadow = "0 0 15px rgba(255,255,255,0.5)"; }); document.querySelectorAll('.trajectory-line').forEach(x => x.classList.remove('active')); oEl.style.borderColor = "var(--accent-gold)"; oEl.style.boxShadow = "0 0 25px var(--accent-gold)"; lnEl.classList.add('active'); videoSidebar.classList.add('active'); document.getElementById('videoDisplay').innerHTML = `<div><h4 style="color:var(--accent-gold);margin-bottom:5px;">${l.title}</h4><div class="difficulty-tag diff-${l.difficulty}">${translations[la][l.difficulty] || l.difficulty}</div><div class="iframe-wrapper"><iframe src="${l.video}" frameborder="0" allowfullscreen></iframe></div><button class="copy-btn" id="copyBtn" onclick="copyShareLink('${l.title}')">${translations[la].copy_link}</button></div>`; }
-        function copyShareLink(title) { const url = `${window.location.origin}${window.location.pathname}?map=${currentMap}&agent=${currentAgent}&ability=${currentAbility}&title=${encodeURIComponent(title)}`; const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); const b = document.getElementById('copyBtn'); b.innerText = translations[localStorage.getItem('app_lang') || 'en'].link_copied; b.style.background = "var(--primary-color)"; b.style.color = "black"; setTimeout(() => { b.innerText = translations[localStorage.getItem('app_lang') || 'en'].copy_link; b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "white"; }, 2000); }
+
+        function updateDotsAndList() {
+            const dl = document.getElementById('dotLayer'), ll = document.getElementById('lineLayer');
+            dl.innerHTML = ""; ll.innerHTML = ""; videoSidebar.classList.remove('active');
+            const filtered = lineupData.filter(l => l.map === currentMap && l.agent === currentAgent && l.ability === currentAbility && (currentSide === 'all' || l.side === currentSide) && (currentDiff === 'all' || l.difficulty === currentDiff));
+            const grouped = {};
+            filtered.forEach(l => { const key = `${l.target.x}_${l.target.y}`; if(!grouped[key]) grouped[key] = []; grouped[key].push(l); });
+            Object.values(grouped).forEach(group => {
+                let d = document.createElement('div'); d.className = 'map-dot target-dot'; d.style.left = group[0].target.x + "%"; d.style.top = group[0].target.y + "%";
+                if(group.length > 1) d.innerHTML = `<span class="badge-count">${group.length}</span>`;
+                d.onclick = (e) => { e.stopPropagation(); selectTargetGroup(group); }; dl.appendChild(d);
+            });
+        }
+
+        function selectTargetGroup(group, force = null) {
+            document.querySelectorAll('.origin-dot').forEach(d => d.remove()); document.getElementById('lineLayer').innerHTML = "";
+            group.forEach((l) => {
+                let o = document.createElement('div'); o.className = 'map-dot origin-dot'; o.style.left = l.origin.x + "%"; o.style.top = l.origin.y + "%"; o.style.backgroundImage = `url('agents/${l.agent}.png')`; document.getElementById('dotLayer').appendChild(o);
+                let dPath = `M ${l.origin.x} ${l.origin.y} L ${l.target.x} ${l.target.y}`;
+                let pg = document.createElementNS("http://www.w3.org/2000/svg", "g"), ln = document.createElementNS("http://www.w3.org/2000/svg", "path"), prt = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                ln.setAttribute("d", dPath); ln.setAttribute("class", "trajectory-line"); prt.setAttribute("class", "trajectory-particle flow-animation"); prt.style.offsetPath = `path('${dPath}')`;
+                pg.appendChild(ln); pg.appendChild(prt);
+                if(l.radius) { let r = document.createElementNS("http://www.w3.org/2000/svg", "circle"); r.setAttribute("cx", l.target.x); r.setAttribute("cy", l.target.y); r.setAttribute("r", l.radius); r.setAttribute("class", "impact-radius"); pg.appendChild(r); }
+                document.getElementById('lineLayer').appendChild(pg);
+                o.onclick = (e) => { e.stopPropagation(); if(activeLineupData === l) { videoSidebar.classList.remove('active'); activeLineupData = null; ln.classList.remove('active'); o.style.borderColor = "white"; } else { setActiveLineup(l, o, ln); } };
+                if(force && l.title === force.title) setActiveLineup(l, o, ln);
+            });
+            centerOnTarget(group[0].target.x, group[0].target.y);
+        }
+
+        function setActiveLineup(lineup, originEl, lineEl) {
+            const la = localStorage.getItem('app_lang') || 'en';
+            activeLineupData = lineup;
+            document.querySelectorAll('.origin-dot').forEach(d => { d.style.borderColor = "white"; d.style.boxShadow = "0 0 15px rgba(255,255,255,0.5)"; });
+            document.querySelectorAll('.trajectory-line').forEach(x => x.classList.remove('active'));
+            originEl.style.borderColor = "var(--accent-gold)"; originEl.style.boxShadow = "0 0 25px var(--accent-gold)";
+            lineEl.classList.add('active'); videoSidebar.classList.add('active');
+            document.getElementById('videoDisplay').innerHTML = `<div><h4 style="color:var(--accent-gold);margin-bottom:10px;">${lineup.title}</h4><div class="difficulty-tag diff-${lineup.difficulty}">${translations[la][lineup.difficulty] || lineup.difficulty}</div><div class="iframe-wrapper"><iframe src="${lineup.video}" frameborder="0" allowfullscreen></iframe></div><button class="copy-btn" id="copyBtn" onclick="copyShareLink('${lineup.title}')">${translations[la].copy_link}</button></div>`;
+        }
+
+        function copyShareLink(title) {
+            const url = `${window.location.origin}${window.location.pathname}?map=${currentMap}&agent=${currentAgent}&ability=${currentAbility}&title=${encodeURIComponent(title)}`;
+            const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+            const b = document.getElementById('copyBtn'), lang = localStorage.getItem('app_lang') || 'en';
+            b.innerText = translations[lang].link_copied; b.style.background = "var(--primary-color)"; b.style.color = "black";
+            setTimeout(() => { b.innerText = translations[lang].copy_link; b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "white"; }, 2000);
+        }
+
         window.onload = initLineupPage;
     </script>
 </body>
