@@ -7,50 +7,28 @@
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav>
-            <ul>
-                <li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li>
-                <li><a href="news.html" data-i18n="nav_news">News</a></li>
-                <li><a href="videos.html" data-i18n="nav_videos">Videos</a></li>
-            </ul>
-        </nav>
-        <div class="about-me-wrapper">
-            <a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
+        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
+        <div class="about-me-wrapper"><a href="#" class="about-me-button" id="aboutMeBtn" data-i18n="nav_about">About Me</a>
             <div class="about-me-dropdown" id="aboutMeDropdown">
                 <div class="social-links">
                     <a href="https://www.tiktok.com/@sladee7766" target="_blank">TikTok</a>
                     <a href="https://www.instagram.com/sladee7766" target="_blank">Instagram</a>
                     <a href="https://www.youtube.com/@sladee7766" target="_blank">YouTube</a>
                 </div>
-                <p style="text-align:center; font-size:12px; color:var(--primary-color); margin-top:5px;">@sladee7766</p>
             </div>
         </div>
     </header>
 
     <main class="home-main">
-        <div class="welcome-banner">
-            <h1 data-i18n="welcome_title">Welcome to Pl</h1>
-            <p data-i18n="welcome_desc">Professional Valorant tactical data.</p>
-        </div>
-        <section class="recommendations-section">
-            <h2 data-i18n="rec_title" style="margin-bottom:20px;">Recommended</h2>
-            <div id="recommendations-container" class="recommendations-grid"></div>
-        </section>
-        <footer style="margin-top: 50px; text-align: center; padding-bottom: 20px;">
-            <p style="font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 2px; font-weight: bold;">BETA BUİLD v1.0.0</p>
-        </footer>
+        <div class="welcome-banner"><h1 data-i18n="welcome_title">Welcome to Pl</h1><p data-i18n="welcome_desc">Professional Valorant tactical data.</p></div>
+        <h2 data-i18n="rec_title" style="margin-bottom:20px;">Recommended</h2>
+        <div id="recommendations-container" class="recommendations-grid"></div>
+        <footer style="margin-top:50px; text-align:center;"><p style="font-size:10px; color:rgba(255,255,255,0.3); letter-spacing:2px; font-weight:bold;">BETA BUİLD v1.0.0</p></footer>
     </main>
 
-    <!-- SETTINGS BLOCK -->
-    <div class="settings-container">
-        <button class="settings-btn" id="settingsBtn">⚙</button>
-        <div class="settings-panel" id="settingsPanel">
-            <h4 data-i18n="settings_title" style="margin-bottom:10px; color:var(--primary-color);">Settings</h4>
-            <button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button>
-            <button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
-        </div>
+    <div class="settings-container"><button class="settings-btn" id="settingsBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
+        <div class="settings-panel" id="settingsPanel"><h4 data-i18n="settings_title" style="margin-bottom:10px; color:var(--primary-color);">Settings</h4><button class="lang-btn" onclick="changeLanguage('en')">🇺🇸 English</button><button class="lang-btn" onclick="changeLanguage('tr')">🇹🇷 Türkçe</button></div>
     </div>
-
-    <script src="lineups.js"></script><script src="news_data.js"></script><script src="script.js"></script>
+    <script src="lineups.js"></script><script src="news_data.js"></script><script src="video_data.js"></script><script src="script.js"></script>
 </body>
 </html>
