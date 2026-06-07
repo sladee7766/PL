@@ -13,7 +13,7 @@ const newsData = [
         {
         id: 2,
         type: "update",
-        date: "2026-06-15",
+        date: "2026-07-15",
         title: { en: "Site Update: added the video tab and fixed the bugs", tr: "Site Güncellemesi: videolar eklentisi eklendi ve buglar düzeltildi" },
         thumbnail: "picture/logo.png",
         content: [
