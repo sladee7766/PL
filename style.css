@@ -1,117 +1,266 @@
-/* --- Global Variables --- */
+/* =========================================================
+   1. GLOBAL VARIABLES & RESET
+   ========================================================= */
 :root {
     --primary-color: #a1b56c;
     --accent-gold: #ffc83d;
     --accent-red: #ff4d4d;
-    --bg-dark: #080808;
+    --bg-dark: #0a0a0a;
     --panel-bg: rgba(15, 15, 15, 0.9);
-    --panel-border: rgba(255, 255, 255, 0.08);
-    --glass-blur: blur(12px);
+    --panel-border: rgba(255, 255, 255, 0.15);
     --text-main: #f0f0f0;
+    --text-muted: #aaaaaa;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Segoe UI', sans-serif; background: url('map_backgrounds/background.png') fixed center/cover; color: var(--text-main); backdrop-filter: brightness(0.5); overflow: hidden; }
 
-/* Scrollbars */
-::-webkit-scrollbar { width: 5px; height: 5px; }
-::-webkit-scrollbar-thumb { background: #555; border-radius: 10px; }
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    background: url('map_backgrounds/background.png') fixed no-repeat center/cover; 
+    color: var(--text-main); 
+    backdrop-filter: brightness(0.6);
+    overflow: hidden; 
+}
+
+@keyframes slideUpFade { 
+    0% { opacity: 0; transform: translateY(20px); } 
+    100% { opacity: 1; transform: translateY(0); } 
+}
+
+@keyframes mapReveal {
+    0% { opacity: 0; filter: blur(10px); transform: scale(0.98); }
+    100% { opacity: 1; filter: blur(0); transform: scale(1); }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-color); }
 
-/* --- Header --- */
+
+/* =========================================================
+   2. HEADER & NAVIGATION
+   ========================================================= */
 header { 
-    background: rgba(0, 0, 0, 0.9); padding: 12px 40px; 
-    display: flex; justify-content: space-between; align-items: center; 
-    border-bottom: 1px solid var(--panel-border); z-index: 1000; position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    background: rgba(10, 10, 10, 0.95); padding: 12px 30px; display: flex; 
+    justify-content: space-between; align-items: center; border-bottom: 1px solid var(--panel-border); 
+    z-index: 1000; position: relative; box-shadow: 0 5px 20px rgba(0,0,0,0.8);
 }
+
 .logo { height: 45px; transition: 0.3s; }
 .logo:hover { filter: drop-shadow(0 0 8px var(--primary-color)); }
 
-nav ul { list-style: none; display: flex; gap: 30px; }
+nav ul { list-style: none; display: flex; gap: 20px; }
 nav a, .about-me-button { 
-    text-decoration: none; color: #ccc; background: rgba(255, 255, 255, 0.03); 
-    padding: 8px 22px; border-radius: 30px; border: 1px solid var(--panel-border); 
-    transition: 0.3s; font-weight: 600; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+    text-decoration: none; color: white; background: rgba(255, 255, 255, 0.05); 
+    padding: 8px 18px; border-radius: 20px; border: 1px solid var(--panel-border); 
+    transition: 0.3s; font-weight: bold; font-size: 13px; text-transform: uppercase; 
 }
-nav a:hover, .about-me-button:hover { background: var(--primary-color); color: black; box-shadow: 0 0 15px rgba(161, 181, 108, 0.3); }
+nav a:hover, .about-me-button:hover { 
+    background: var(--primary-color); color: black; box-shadow: 0 0 10px rgba(161, 181, 108, 0.5); 
+}
 
-/* --- Sidebar UI --- */
+/* About Me Dropdown */
+.about-me-wrapper { position: relative; }
+.about-me-dropdown { 
+    position: absolute; top: 120%; right: 0; background: var(--panel-bg); 
+    backdrop-filter: blur(15px); border: 1px solid var(--panel-border); 
+    border-radius: 12px; padding: 15px; z-index: 1000; min-width: 200px; 
+    opacity: 0; visibility: hidden; transform: translateY(-10px); transition: 0.3s; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+}
+.about-me-dropdown.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.social-links a { display: flex; align-items: center; gap: 10px; color: white; text-decoration: none; margin-bottom: 8px; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; font-size: 13px; transition: 0.2s; }
+.social-links a:hover { background: rgba(255,255,255,0.15); border-color: var(--primary-color); }
+
+
+/* =========================================================
+   3. SETTINGS UI (Floating Bottom Right)
+   ========================================================= */
+.settings-container { position: fixed; bottom: 25px; right: 25px; z-index: 9999; }
+.settings-btn { 
+    background: rgba(15, 15, 15, 0.9); color: white; width: 50px; height: 50px; 
+    border-radius: 50%; border: 1px solid var(--panel-border); cursor: pointer; display: flex; 
+    align-items: center; justify-content: center; backdrop-filter: blur(10px); transition: 0.3s; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6); 
+}
+.settings-btn:hover { background: var(--primary-color); color: black; transform: rotate(90deg); }
+.settings-btn svg { width: 24px; height: 24px; }
+
+.settings-panel { 
+    position: absolute; bottom: 65px; right: 0; width: max-content; min-width: 180px; 
+    background: var(--panel-bg); backdrop-filter: blur(15px); border: 1px solid var(--panel-border); 
+    border-radius: 12px; padding: 15px; opacity: 0; visibility: hidden; transform: translateY(10px); 
+    transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
+}
+.settings-panel.active { opacity: 1; visibility: visible; transform: translateY(0); }
+.lang-btn { 
+    background: rgba(255,255,255,0.05); color: white; border: 1px solid var(--panel-border); 
+    padding: 10px; border-radius: 6px; width: 100%; text-align: left; margin-top: 5px; 
+    cursor: pointer; font-size: 13px; white-space: nowrap; transition: 0.2s; 
+}
+.lang-btn:hover { background: var(--primary-color); color: black; }
+
+
+/* =========================================================
+   4. CONTENT GRIDS (Home, News, Videos)
+   ========================================================= */
+.home-main { padding: 40px; max-width: 1300px; margin: 0 auto; overflow-y: auto; height: calc(100vh - 70px); }
+.welcome-banner { background: var(--panel-bg); backdrop-filter: blur(15px); padding: 40px; border-radius: 15px; border: 1px solid var(--panel-border); text-align: center; margin-bottom: 40px; animation: slideUpFade 0.5s ease forwards; }
+
+.recommendations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding-bottom: 50px; }
+.video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding-bottom: 50px; }
+@media (max-width: 1100px) { .video-grid { grid-template-columns: repeat(2, 1fr); } }
+
+.recommendation-card, .video-card { 
+    background: rgba(30, 30, 30, 0.7); border-radius: 12px; overflow: hidden; 
+    text-decoration: none; color: white; border: 1px solid var(--panel-border); 
+    transition: 0.3s; display: flex; flex-direction: column; cursor: pointer; 
+    animation: slideUpFade 0.6s ease forwards; 
+}
+.recommendation-card:hover, .video-card:hover { transform: translateY(-8px); border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(0,0,0,0.6); }
+
+.card-image-wrapper { height: 160px; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; position: relative; padding: 10px; border-bottom: 1px solid var(--panel-border); }
+.card-image-wrapper img { width: 100%; height: 100%; object-fit: contain; transition: 0.3s; }
+.recommendation-card:hover .card-image-wrapper img, .video-card:hover .card-image-wrapper img { transform: scale(1.05); }
+
+.video-duration { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.9); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; border: 1px solid var(--panel-border); z-index: 10; }
+.card-content { padding: 15px; }
+
+
+/* =========================================================
+   5. BADGES & TAGS
+   ========================================================= */
+.badge { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: bold; border: 1px solid currentColor; text-transform: uppercase; }
+.badge.lineup { color: var(--primary-color); background: rgba(161, 181, 108, 0.1); }
+.badge.news { color: #4da6ff; background: rgba(77, 166, 255, 0.1); }
+.badge.update { color: #b366ff; background: rgba(179, 102, 255, 0.1); }
+.badge.video { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+
+.difficulty-tag { display: inline-block; padding: 4px 12px; border-radius: 15px; font-size: 11px; font-weight: bold; text-transform: uppercase; margin: 10px 0; }
+.diff-easy { background: rgba(0, 255, 127, 0.15); color: #00ff7f; border: 1px solid #00ff7f; }
+.diff-medium { background: rgba(255, 200, 61, 0.15); color: var(--accent-gold); border: 1px solid var(--accent-gold); }
+.diff-hard { background: rgba(255, 77, 77, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); }
+
+
+/* =========================================================
+   6. NEWS TIMELINE & OVERLAYS
+   ========================================================= */
+.news-timeline { display: flex; flex-direction: column; gap: 20px; max-width: 900px; margin: 0 auto; padding-bottom: 50px; }
+.news-row { display: flex; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 15px; overflow: hidden; height: 150px; cursor: pointer; transition: 0.3s; backdrop-filter: blur(10px); }
+.news-row:hover { transform: translateX(10px); border-color: var(--primary-color); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+.news-thumb { width: 250px; height: 100%; object-fit: cover; border-right: 1px solid var(--panel-border); flex-shrink: 0; }
+.news-info { padding: 20px; display: flex; flex-direction: column; justify-content: center; }
+.news-title { font-size: 22px; color: white; margin: 10px 0; }
+.news-read-btn { display: inline-block; margin-top: 10px; color: var(--primary-color); font-weight: bold; font-size: 14px; }
+
+.article-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.9); backdrop-filter: blur(20px); z-index: 9999; display: none; overflow-y: auto; }
+.article-overlay.active { display: block; animation: mapReveal 0.3s ease forwards; }
+.article-close-btn { position: fixed; top: 20px; right: 30px; font-size: 45px; color: white; background: none; border: none; cursor: pointer; z-index: 10000; transition: 0.2s; }
+.article-close-btn:hover { color: var(--accent-red); transform: scale(1.1); }
+.article-container { max-width: 800px; margin: 60px auto; background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 15px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); }
+.article-image { width: 100%; border-radius: 10px; margin: 20px 0; border: 1px solid var(--panel-border); }
+.article-text { line-height: 1.6; font-size: 16px; margin-bottom: 20px; color: #ddd; }
+
+
+/* =========================================================
+   7. LINEUP VIEWER & SIDEBAR FILTERS
+   ========================================================= */
 .viewer-container { display: flex; height: calc(100vh - 70px); padding: 15px; gap: 15px; position: relative; }
 
 .selection-sidebar { 
-    width: 280px; background: var(--panel-bg); backdrop-filter: var(--glass-blur); 
-    border-radius: 20px; padding: 20px; border: 1px solid var(--panel-border); 
-    display: flex; flex-direction: column; overflow-y: auto; z-index: 10;
-    box-shadow: 5px 0 30px rgba(0,0,0,0.3);
+    width: 280px; background: var(--panel-bg); backdrop-filter: blur(15px); border-radius: 15px; 
+    padding: 20px; border: 1px solid var(--panel-border); display: flex; flex-direction: column; 
+    overflow-y: auto; z-index: 10; box-shadow: 5px 0 20px rgba(0,0,0,0.5); 
 }
 
-.sidebar-section { margin-bottom: 25px; }
-.section-title { color: #666; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 2px; }
+.sidebar-section { margin-bottom: 20px; }
+.section-title { color: #888; font-size: 11px; font-weight: bold; text-transform: uppercase; margin-bottom: 10px; display: block; letter-spacing: 1px; }
 
-/* Filter Styling */
-.search-bar { width: 100%; padding: 10px 15px; background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border); border-radius: 12px; color: white; margin-bottom: 12px; font-size: 13px; transition: 0.3s; }
-.search-bar:focus { border-color: var(--primary-color); background: rgba(0,0,0,0.6); }
+/* Form Elements / Filters */
+.search-bar { width: 100%; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--panel-border); border-radius: 8px; color: white; margin-bottom: 10px; font-size: 13px; outline: none; transition: 0.3s; }
+.search-bar:focus { border-color: var(--primary-color); }
 
-.side-toggle { display: flex; gap: 8px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 15px; }
-.side-btn { flex: 1; padding: 8px; border: none; background: transparent; color: #777; cursor: pointer; border-radius: 10px; font-size: 11px; font-weight: bold; transition: 0.3s; }
-.side-btn.active { background: #333; color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+.side-toggle { display: flex; gap: 4px; margin-bottom: 15px; background: rgba(0,0,0,0.4); padding: 5px; border-radius: 10px; flex-wrap: wrap; border: 1px solid var(--panel-border); }
+.filter-btn { flex: 1; padding: 8px 2px; border: none; background: transparent; color: #888; cursor: pointer; border-radius: 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; transition: 0.2s; }
+.filter-btn.active { background: #333; color: var(--primary-color); box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
 
-/* --- Map Elements --- */
-.map-list { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
-.map-banner { min-width: 110px; height: 55px; border-radius: 12px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: 0.4s; position: relative; filter: saturate(0.5); }
-.map-banner span { color: white; font-weight: 800; font-size: 12px; text-shadow: 0 2px 4px #000; z-index: 2; }
-.map-banner.active { border-color: var(--accent-gold); filter: saturate(1.2); transform: scale(1.05); }
+/* Selectors */
+.map-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.map-banner { height: 40px; border-radius: 8px; background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; transition: 0.3s; filter: saturate(0.5); position: relative; overflow: hidden; }
+.map-banner::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.5); transition: 0.3s; }
+.map-banner span { position: relative; z-index: 2; color: white; font-weight: bold; font-size: 12px; text-shadow: 0 2px 4px black; text-transform: uppercase; letter-spacing: 1px; }
+.map-banner.active { border-color: var(--accent-gold); filter: saturate(1.2); }
+.map-banner.active::after { background: rgba(0,0,0,0.1); }
 
 .agent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.agent-icon { width: 100%; cursor: pointer; border: 2px solid transparent; border-radius: 10px; background: rgba(0,0,0,0.3); filter: brightness(0.6); transition: 0.3s; }
-.agent-icon:hover { transform: scale(1.1); filter: brightness(1); }
-.agent-icon.active { border-color: var(--accent-gold); filter: brightness(1.2); background: rgba(255, 200, 61, 0.1); }
+.agent-icon { width: 100%; aspect-ratio: 1; object-fit: cover; cursor: pointer; border: 2px solid transparent; border-radius: 8px; background: rgba(0,0,0,0.5); filter: grayscale(80%); transition: 0.3s; }
+.agent-icon:hover { filter: grayscale(0%); transform: scale(1.05); }
+.agent-icon.active { border-color: var(--accent-gold); filter: grayscale(0%); background: rgba(255,200,61,0.1); }
 
-/* --- Map Engine & Centering --- */
-.map-area { flex-grow: 1; position: relative; display: flex; flex-direction: column; }
-.map-wrapper { flex-grow: 1; background: #000; border-radius: 20px; position: relative; overflow: hidden; cursor: grab; display: flex; align-items: center; justify-content: center; border: 1px solid var(--panel-border); }
+
+/* =========================================================
+   8. MAP ENGINE (Centering Math & Overlays)
+   ========================================================= */
+.map-area { flex-grow: 1; position: relative; display: flex; flex-direction: column; animation: mapReveal 0.8s ease; }
+.map-wrapper { 
+    flex-grow: 1; background: #000; border-radius: 15px; position: relative; 
+    overflow: hidden; cursor: grab; display: flex; align-items: center; justify-content: center; 
+    border: 1px solid var(--panel-border); box-shadow: inset 0 0 50px rgba(0,0,0,0.8); 
+}
 .map-wrapper:active { cursor: grabbing; }
 
-.map-content { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; display: inline-block; }
+.map-content { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; display: inline-block; line-height: 0; }
 #mainMapImg { display: block; width: auto; height: auto; max-width: none; max-height: 85vh; opacity: 0.8; user-select: none; -webkit-user-drag: none; pointer-events: none; }
-
-/* Trajectories */
 #dotLayer, #lineLayer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
-.trajectory-line { stroke: var(--accent-gold); stroke-opacity: 0.2; stroke-width: 0.5; fill: none; transition: 0.5s ease; }
+
+/* Floating Map Buttons */
+.reset-zoom-btn { position: absolute; top: 20px; left: 20px; background: rgba(10, 10, 10, 0.9); color: white; border: 1px solid var(--panel-border); padding: 10px 20px; border-radius: 10px; cursor: pointer; z-index: 100; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.reset-zoom-btn:hover { background: var(--primary-color); color: black; }
+
+.ability-bar { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px); border: 1px solid var(--accent-gold); border-radius: 50px; padding: 8px 20px; display: flex; gap: 10px; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+.ability-btn { padding: 8px 20px; font-size: 12px; background: transparent; color: #aaa; border: none; border-radius: 30px; cursor: pointer; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+.ability-btn:hover { color: white; }
+.ability-btn.active { background: var(--accent-gold); color: black; box-shadow: 0 0 15px rgba(255, 200, 61, 0.4); }
+
+/* Map UI Overlays (Video Popup) */
+.video-sidebar { 
+    position: absolute; right: 20px; top: 20px; bottom: 20px; width: 0; opacity: 0; visibility: hidden; 
+    background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(25px); border: 1px solid var(--accent-gold); 
+    border-radius: 15px; padding: 0; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); z-index: 500; 
+    overflow-y: auto; box-shadow: -10px 0 40px rgba(0,0,0,0.9); 
+}
+.video-sidebar.active { width: 400px; opacity: 1; visibility: visible; padding: 25px; }
+
+
+/* =========================================================
+   9. TACTICAL DOTS & TRAJECTORIES
+   ========================================================= */
+.trajectory-line { stroke: var(--accent-gold); stroke-opacity: 0.3; stroke-width: 0.6; fill: none; transition: 0.3s ease; }
 .trajectory-line.active { stroke-opacity: 1; stroke-width: 1.5; filter: drop-shadow(0 0 8px var(--accent-gold)); }
-.trajectory-particle { fill: #fff; filter: drop-shadow(0 0 5px #fff); r: 0.8; }
+.trajectory-particle { fill: #fff; r: 0.8; filter: drop-shadow(0 0 5px #fff); }
 .flow-animation { animation: particleFlow 2.5s infinite linear; }
 @keyframes particleFlow { 0% { offset-distance: 0%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { offset-distance: 100%; opacity: 0; } }
 
-/* Dots */
-.map-dot { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; z-index: 10; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-.target-dot { width: 12px; height: 12px; background: var(--accent-gold); border: 2px solid white; box-shadow: 0 0 15px rgba(255, 200, 61, 0.5); }
-.target-dot.active-target { background: white; transform: translate(-50%, -50%) scale(1.5); box-shadow: 0 0 25px white; }
+.map-dot { position: absolute; border-radius: 50%; transform: translate(-50%, -50%); pointer-events: auto; cursor: pointer; z-index: 10; transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.target-dot { width: 12px; height: 12px; background: var(--accent-gold); border: 2px solid white; box-shadow: 0 0 15px rgba(255,200,61,0.5); }
+.target-dot.active-target { background: white; transform: translate(-50%, -50%) scale(1.5); box-shadow: 0 0 20px white; }
 .badge-count { position: absolute; top: -10px; right: -10px; background: #000; color: var(--accent-gold); font-size: 10px; font-weight: 900; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--accent-gold); }
-.origin-dot { width: 32px; height: 32px; background-size: cover; border: 2px solid white; box-shadow: 0 0 20px rgba(0,0,0,0.6); }
+.origin-dot { width: 32px; height: 32px; background-size: cover; background-position: center; border: 2px solid white; box-shadow: 0 0 15px rgba(0,0,0,0.6); }
+.impact-radius { fill: var(--primary-color); fill-opacity: 0.15; stroke: var(--primary-color); stroke-width: 0.4; stroke-dasharray: 2; pointer-events: none; }
 
-/* --- Video Overlay --- */
-.video-sidebar { 
-    position: absolute; right: 25px; top: 25px; bottom: 25px; width: 0; opacity: 0; visibility: hidden;
-    background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(30px); border: 1px solid var(--accent-gold); 
-    border-radius: 20px; padding: 0; transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); z-index: 500;
-    box-shadow: -20px 0 50px rgba(0,0,0,0.9); overflow-y: auto;
-}
-.video-sidebar.active { width: 420px; opacity: 1; visibility: visible; padding: 30px; }
-.video-sidebar h3 { font-size: 14px; color: #555; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px; border-bottom: 1px solid var(--panel-border); padding-bottom: 10px; }
 
-/* Buttons */
-.reset-zoom-btn { position: absolute; top: 20px; right: 20px; background: rgba(15, 15, 15, 0.9); color: white; border: 1px solid var(--panel-border); padding: 8px 18px; border-radius: 10px; cursor: pointer; z-index: 50; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-.reset-zoom-btn:hover { background: white; color: black; }
-.ability-bar { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px); border: 1px solid var(--accent-gold); border-radius: 50px; padding: 8px 20px; display: flex; gap: 10px; z-index: 50; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-.ability-btn { padding: 8px 22px; font-size: 12px; background: transparent; color: #999; border: none; border-radius: 30px; cursor: pointer; font-weight: 800; transition: 0.3s; text-transform: uppercase; }
-.ability-btn:hover { color: white; }
-.ability-btn.active { background: var(--accent-gold); color: black; box-shadow: 0 0 20px rgba(255, 200, 61, 0.4); }
-
-.copy-btn { width: 100%; margin-top: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 13px; }
+/* =========================================================
+   10. UTILITIES & POPUPS
+   ========================================================= */
+.copy-btn { width: 100%; margin-top: 20px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--panel-border); color: white; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 13px; text-transform: uppercase; }
 .copy-btn:hover { background: var(--primary-color); color: black; border-color: var(--primary-color); }
+.iframe-wrapper { position: relative; padding-bottom: 56.25%; height: 0; margin-top: 15px; border-radius: 12px; overflow: hidden; background: #000; border: 1px solid var(--panel-border); }
+.iframe-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+.empty-state { text-align: center; padding: 50px; color: var(--text-muted); font-style: italic; }
 
-.settings-container { position: fixed; bottom: 25px; right: 25px; z-index: 2000; }
-.settings-btn { background: rgba(15, 15, 15, 0.9); color: white; width: 50px; height: 50px; border-radius: 50%; border: 1px solid var(--panel-border); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 22px; transition: 0.4s; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-.settings-btn:hover { background: var(--primary-color); transform: rotate(90deg); color: black; }
+.helper-hint { margin-top: auto; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; color: var(--text-muted); border-left: 3px solid var(--primary-color); font-size: 11px; }
+.coord-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(10px); border: 1px solid var(--accent-gold); padding: 25px; border-radius: 15px; z-index: 3000; visibility: hidden; opacity: 0; transition: 0.3s; text-align: center; }
+.coord-popup.active { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.coord-popup code { display: block; background: #000; padding: 15px; border-radius: 8px; margin: 15px 0; color: #00ffcc; font-size: 16px; letter-spacing: 1px; }
