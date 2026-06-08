@@ -37,13 +37,19 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// --- 2. AGENT THEMES ---
+// --- 2. AGENT THEMES (Yeni Neon ve Canlı Renkler) ---
 const agentColors = {
-    sova: { p: "#4da6ff", a: "#80c1ff" }, viper: { p: "#00ff7f", a: "#66ffb2" },
-    brimstone: { p: "#ff8c00", a: "#ffb366" }, killjoy: { p: "#ffea00", a: "#ffdd44" },
-    cypher: { p: "#d4af37", a: "#fdf5e6" }, deadlock: { p: "#b3b3b3", a: "#e6e6e6" },
-    fade: { p: "#8a2be2", a: "#b366ff" }, kayo: { p: "#4169e1", a: "#7b68ee" },
-    miks: { p: "#ff4500", a: "#ff6347" }, veto: { p: "#cd5c5c", a: "#f08080" }, vyse: { p: "#ff69b4", a: "#ffb6c1" }
+    sova: { p: "#00e5ff", a: "#80dfff" },   // Neon Mavi
+    viper: { p: "#00ff66", a: "#99ffcc" },  // Neon Yeşil
+    brimstone: { p: "#ff6600", a: "#ffb380" }, // Canlı Turuncu
+    killjoy: { p: "#ffcc00", a: "#ffe680" }, // Canlı Sarı
+    cypher: { p: "#e6b800", a: "#fff0b3" },  // Altın
+    deadlock: { p: "#cccccc", a: "#ffffff" },// Parlak Gri/Beyaz
+    fade: { p: "#b366ff", a: "#d9b3ff" },    // Neon Mor
+    kayo: { p: "#3385ff", a: "#99c2ff" },    // Canlı Lacivert/Mavi
+    miks: { p: "#ff3333", a: "#ff9999" },    // Neon Kırmızı
+    veto: { p: "#ff5050", a: "#ffb3b3" },    // Pastel Kırmızı
+    vyse: { p: "#ff33cc", a: "#ffb3ec" }     // Neon Pembe
 };
 
 function applyAgentTheme(agent) {
@@ -53,8 +59,9 @@ function applyAgentTheme(agent) {
         root.style.setProperty('--primary-color', colors.p); 
         root.style.setProperty('--accent-gold', colors.a);
     } else {
-        root.style.setProperty('--primary-color', '#a1b56c'); 
-        root.style.setProperty('--accent-gold', '#ffc83d');
+        // Default Neon Yeşil & Sarı
+        root.style.setProperty('--primary-color', '#00ffcc'); 
+        root.style.setProperty('--accent-gold', '#ffcc00');
     }
 }
 
@@ -110,9 +117,15 @@ function loadRecommendations() {
         ...(typeof newsData !== 'undefined' ? newsData.map(item => ({ ...item, type: 'news', title: item.title[lang] || item.title['en'], url: `news.html?id=${item.id}`, image: item.thumbnail })) : []),
         ...(typeof videoData !== 'undefined' ? videoData.map(item => ({ ...item, type: 'video', title: item.title[lang] || item.title['en'], url: `videos.html?id=${item.id}`, image: item.thumbnail, duration: item.duration })) : [])
     ];
+    
     const shuffled = pool.sort(() => 0.5 - Math.random()).slice(0, 12);
     container.innerHTML = "";
-    if(shuffled.length === 0) { container.innerHTML = `<p class="empty-state" data-i18n="come_back">${translations[lang].come_back}</p>`; return; }
+    
+    if(shuffled.length === 0) { 
+        container.innerHTML = `<p class="empty-state" data-i18n="come_back">${translations[lang].come_back}</p>`; 
+        return; 
+    }
+    
     shuffled.forEach(item => {
         const card = document.createElement('a'); card.className = 'recommendation-card'; card.href = item.url;
         const img = item.image || (item.agent ? `agents/${item.agent}.png` : 'picture/logo.png');
@@ -134,14 +147,20 @@ function toggleFavorite(title) {
 // --- 6. INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
     applyLanguage(localStorage.getItem('app_lang') || 'en');
+    
+    // UI Toggles (About Me & Settings)
     const amBtn = document.getElementById('aboutMeBtn'), amDrop = document.getElementById('aboutMeDropdown');
     const setBtn = document.getElementById('settingsBtn'), setPan = document.getElementById('settingsPanel');
+    
     if (amBtn) amBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); amDrop.classList.toggle('show'); };
     if (setBtn) setBtn.onclick = (e) => { e.preventDefault(); e.stopPropagation(); setPan.classList.toggle('active'); };
+    
     document.addEventListener('click', (e) => {
         if (amDrop && !amDrop.contains(e.target)) amDrop.classList.remove('show');
         if (setPan && !setPan.contains(e.target)) setPan.classList.remove('active');
     });
+    
+    // SFX Toggle System
     const sfxBtn = document.getElementById('sfxToggleBtn');
     if(sfxBtn) {
         const sfx = localStorage.getItem('app_sfx') || 'on';
@@ -154,5 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(newVal === 'on') playClick();
         };
     }
+    
+    // Load Homepage if applicable
     if (document.getElementById('recommendations-container')) loadRecommendations();
 });
