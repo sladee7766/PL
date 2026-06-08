@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pl - Submit</title><link rel="stylesheet" href="style.css">
+    <style>.submit-container { background: var(--panel-bg); backdrop-filter: blur(15px); padding: 40px; border-radius: 15px; border: 1px solid var(--panel-border); max-width: 500px; margin: 0 auto; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.5); } .form-group { margin-bottom: 20px; } .form-group label { display: block; margin-bottom: 8px; color: var(--primary-color); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; } .form-input { width: 100%; padding: 12px 15px; background: rgba(0,0,0,0.5); border: 1px solid var(--panel-border); color: white; border-radius: 8px; outline: none; font-size: 14px; transition: 0.3s; } .form-input:focus { border-color: var(--primary-color); background: rgba(0,0,0,0.8); } #statusMessage { margin-top: 15px; font-size: 13px; font-weight: bold; text-align: center; }</style>
+</head>
+<body>
+    <header>
+        <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
+        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li><li><a href="crosshairs.html" data-i18n="nav_cross">Crosshairs</a></li><li><a href="submit.html" data-i18n="nav_sub">Submit</a></li></ul></nav>
+        <div class="about-me-wrapper"><a href="main.html" class="about-me-button" data-i18n="go_back">Back</a></div>
+    </header>
+    <main class="home-main" style="text-align: center;">
+        <div class="welcome-banner"><h1 data-i18n="sub_title">Submit a Lineup</h1><p data-i18n="submit_desc">Found a god-tier lineup? Send it to us!</p></div>
+        <div class="submit-container">
+            <div class="form-group"><label data-i18n="sub_name">Your Name</label><input type="text" id="subName" class="form-input" data-i18n="sub_name_ph"></div>
+            <div class="form-group"><label data-i18n="sub_map">Map & Agent</label><input type="text" id="subAgentMap" class="form-input" data-i18n="sub_map_ph"></div>
+            <div class="form-group"><label data-i18n="sub_vid">Video Link</label><input type="url" id="subLink" class="form-input" data-i18n="sub_vid_ph"></div>
+            <div class="form-group"><label data-i18n="sub_desc">Details</label><textarea id="subDesc" class="form-input" rows="3" data-i18n="sub_desc_ph"></textarea></div>
+            <button class="copy-btn" id="submitBtn" onclick="sendToDiscord()" style="background:var(--primary-color); color:black;" data-i18n="sub_btn">Send Lineup</button>
+            <div id="statusMessage"></div>
+        </div>
+    </main>
+    <div class="settings-container"><button class="settings-btn" id="settingsBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button><div class="settings-panel" id="settingsPanel"><h4 data-i18n="settings_title">Settings</h4><button class="lang-btn" id="sfxToggleBtn">Sound: ON</button><button class="lang-btn" onclick="changeLanguage('en')">[EN] English</button><button class="lang-btn" onclick="changeLanguage('tr')">[TR] Türkçe</button></div></div>
+    <script src="script.js"></script>
+    <script>function sendToDiscord() { const u = "YOUR_DISCORD_WEBHOOK_URL_HERE"; const s = document.getElementById('statusMessage'); if(!document.getElementById('subAgentMap').value || !document.getElementById('subLink').value) { s.innerText = "Please fill Map/Agent and Video Link!"; s.style.color = "var(--accent-red)"; return; } fetch(u, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ content: `🚨 **NEW LINEUP** 🚨\n**From:** ${document.getElementById('subName').value}\n**Map:** ${document.getElementById('subAgentMap').value}\n**Link:** ${document.getElementById('subLink').value}\n**Desc:** ${document.getElementById('subDesc').value}` }) }).then(() => { s.innerText = "Submitted!"; s.style.color = "var(--primary-color)"; }).catch(() => { s.innerText = "Error sending."; s.style.color = "var(--accent-red)"; }); }</script>
+</body>
+</html>
