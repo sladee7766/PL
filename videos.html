@@ -7,7 +7,7 @@
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
+        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li><li><a href="crosshairs.html" data-i18n="nav_cross">Crosshairs</a></li><li><a href="submit.html" data-i18n="nav_sub">Submit</a></li></ul></nav>
         <div class="about-me-wrapper"><a href="main.html" class="about-me-button" data-i18n="go_back">Back</a></div>
     </header>
 
@@ -16,51 +16,29 @@
         <div id="videoGrid" class="video-grid"></div>
     </main>
 
-    <div id="videoOverlay" class="article-overlay">
-        <button class="article-close-btn" onclick="closeVideo()">&times;</button>
-        <div class="article-container" style="max-width:900px; text-align:center;">
-            <h1 id="vidTitle" style="color:var(--accent-gold); margin-bottom:20px; font-size: 24px;"></h1>
-            <div id="vidPlayer" class="iframe-wrapper"></div>
-            <button class="copy-btn" id="copyVidBtn" onclick="copyVidLink()">Copy Link</button>
-        </div>
+    <div id="videoOverlay" class="article-overlay"><button class="article-close-btn" onclick="closeVideo()">&times;</button>
+        <div class="article-container" style="max-width:900px; text-align:center;"><h1 id="vidTitle" style="color:var(--accent-gold); margin-bottom:20px; font-size:24px;"></h1><div id="vidPlayer" class="iframe-wrapper"></div><button class="copy-btn" id="copyVidBtn" onclick="copyVidLink()">Copy Link</button></div>
     </div>
 
     <div class="settings-container"><button class="settings-btn" id="settingsBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
-        <div class="settings-panel" id="settingsPanel"><button class="lang-btn" onclick="changeLanguage('en')">English</button><button class="lang-btn" onclick="changeLanguage('tr')">Türkçe</button></div>
+        <div class="settings-panel" id="settingsPanel"><h4 data-i18n="settings_title">Settings</h4><button class="lang-btn" id="sfxToggleBtn">Sound: ON</button><button class="lang-btn" onclick="changeLanguage('en')">[EN] English</button><button class="lang-btn" onclick="changeLanguage('tr')">[TR] Türkçe</button></div>
     </div>
 
     <script src="video_data.js"></script><script src="script.js"></script>
     <script>
         let currentVidId = null;
         function renderVideos() {
-            const grid = document.getElementById('videoGrid'), lang = localStorage.getItem('app_lang') || 'en';
-            grid.innerHTML = "";
-            videoData.forEach((vid, i) => {
-                const card = document.createElement('div'); card.className = 'video-card'; card.style.animationDelay = `${i * 0.1}s`; card.onclick = () => openVideo(vid, lang);
-                card.innerHTML = `<div class="card-image-wrapper"><img src="${vid.thumbnail}"><div class="video-duration">${vid.duration}</div></div><div class="card-content"><span class="badge video">VIDEO</span><h3 style="margin-top:10px; font-size:15px;">${vid.title[lang]}</h3></div>`;
+            const grid = document.getElementById('videoGrid'), lang = localStorage.getItem('app_lang') || 'en'; grid.innerHTML = "";
+            if(typeof videoData !== 'undefined') { videoData.forEach((vid, i) => {
+                const card = document.createElement('div'); card.className = 'video-card'; card.style.animationDelay = `${i * 0.05}s`; card.onclick = () => openVideo(vid, lang);
+                card.innerHTML = `<div class="card-image-wrapper"><img src="${vid.thumbnail}"><div class="video-duration">${vid.duration}</div></div><div class="card-content"><span class="badge video">VIDEO</span><h3 style="margin-top:10px; font-size:16px;">${vid.title[lang] || vid.title['en']}</h3></div>`;
                 grid.appendChild(card);
-            });
-            const p = new URLSearchParams(window.location.search);
-            if(p.has('id')) { const f = videoData.find(n => n.id == p.get('id')); if(f) openVideo(f, lang); }
+            }); const p = new URLSearchParams(window.location.search); if(p.has('id')) { const f = videoData.find(n => n.id == p.get('id')); if(f) openVideo(f, lang); } }
         }
-        function openVideo(vid, lang) { 
-            currentVidId = vid.id;
-            document.getElementById('vidTitle').innerText = vid.title[lang]; 
-            document.getElementById('vidPlayer').innerHTML = `<iframe src="${vid.url}?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>`; 
-            document.getElementById('copyVidBtn').innerText = translations[lang].copy_link;
-            document.getElementById('videoOverlay').classList.add('active'); 
-        }
+        function openVideo(vid, lang) { currentVidId = vid.id; document.getElementById('vidTitle').innerText = vid.title[lang] || vid.title['en']; document.getElementById('vidPlayer').innerHTML = `<iframe src="${vid.url}?autoplay=1" allow="autoplay; fullscreen" allowfullscreen></iframe>`; document.getElementById('copyVidBtn').innerText = translations[lang].copy_link; document.getElementById('videoOverlay').classList.add('active'); if(typeof playSwoosh === 'function') playSwoosh(); }
         function closeVideo() { document.getElementById('videoOverlay').classList.remove('active'); document.getElementById('vidPlayer').innerHTML = ""; currentVidId = null; }
-        document.getElementById('videoOverlay').addEventListener('click', (e) => { if(e.target.id === 'videoOverlay') closeVideo(); });
-        
-        function copyVidLink() {
-            const url = `${window.location.origin}${window.location.pathname}?id=${currentVidId}`;
-            const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            const b = document.getElementById('copyVidBtn'), lang = localStorage.getItem('app_lang') || 'en';
-            b.innerText = translations[lang].link_copied; b.style.background = "var(--primary-color)"; b.style.color = "black";
-            setTimeout(() => { b.innerText = translations[lang].copy_link; b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "white"; }, 2000);
-        }
-        window.onload = renderVideos;
+        function copyVidLink() { const url = `${window.location.origin}${window.location.pathname}?id=${currentVidId}`; const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); const btn = document.getElementById('copyVidBtn'), lang = localStorage.getItem('app_lang') || 'en'; btn.innerText = translations[lang].link_copied; btn.style.background = "var(--primary-color)"; btn.style.color = "black"; setTimeout(() => { btn.innerText = translations[lang].copy_link; btn.style.background = "rgba(255,255,255,0.05)"; btn.style.color = "white"; }, 2000); }
+        document.getElementById('videoOverlay').addEventListener('click', (e) => { if(e.target.id === 'videoOverlay') closeVideo(); }); window.onload = renderVideos;
     </script>
 </body>
 </html>
