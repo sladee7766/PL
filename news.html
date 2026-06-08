@@ -7,7 +7,7 @@
 <body>
     <header>
         <div class="logo-container"><a href="main.html"><img src="picture/logo.png" class="logo"></a></div>
-        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li></ul></nav>
+        <nav><ul><li><a href="lineup.html" data-i18n="nav_lineups">Lineups</a></li><li><a href="news.html" data-i18n="nav_news">News</a></li><li><a href="videos.html" data-i18n="nav_videos">Videos</a></li><li><a href="crosshairs.html" data-i18n="nav_cross">Crosshairs</a></li><li><a href="submit.html" data-i18n="nav_sub">Submit</a></li></ul></nav>
         <div class="about-me-wrapper"><a href="main.html" class="about-me-button" data-i18n="go_back">Back</a></div>
     </header>
 
@@ -16,61 +16,22 @@
         <div id="newsTimeline" class="news-timeline"></div>
     </main>
 
-    <div id="articleOverlay" class="article-overlay">
-        <button class="article-close-btn" onclick="closeArt()">&times;</button>
-        <div class="article-container">
-            <h1 id="artTitle" style="color:var(--accent-gold); margin-bottom:10px;"></h1>
-            <p id="artDate" style="color:#888; margin-bottom:20px; border-bottom:1px solid var(--panel-border); padding-bottom:10px;"></p>
-            <div id="artBody"></div>
-            <!-- Added Copy Link for News -->
-            <button class="copy-btn" id="copyNewsBtn" onclick="copyNewsLink()">Copy Link</button>
-        </div>
+    <div id="articleOverlay" class="article-overlay"><button class="article-close-btn" onclick="closeArt()">&times;</button>
+        <div class="article-container"><h1 id="artTitle" style="color:var(--accent-gold); margin-bottom:10px;"></h1><p id="artDate" style="color:#888; margin-bottom:20px; border-bottom:1px solid var(--panel-border); padding-bottom:10px;"></p><div id="artBody"></div><button class="copy-btn" id="copyNewsBtn" onclick="copyNewsLink()">Copy Link</button></div>
     </div>
 
     <div class="settings-container"><button class="settings-btn" id="settingsBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></button>
-        <div class="settings-panel" id="settingsPanel"><button class="lang-btn" onclick="changeLanguage('en')">English</button><button class="lang-btn" onclick="changeLanguage('tr')">Türkçe</button></div>
+        <div class="settings-panel" id="settingsPanel"><h4 data-i18n="settings_title">Settings</h4><button class="lang-btn" id="sfxToggleBtn">Sound: ON</button><button class="lang-btn" onclick="changeLanguage('en')">[EN] English</button><button class="lang-btn" onclick="changeLanguage('tr')">[TR] Türkçe</button></div>
     </div>
 
     <script src="news_data.js"></script><script src="script.js"></script>
     <script>
-        let currentArtId = null;
-        function renderNewsPage() {
-            const c = document.getElementById('newsTimeline'), l = localStorage.getItem('app_lang') || 'en';
-            [...newsData].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(art => {
-                const r = document.createElement('div'); r.className = 'news-row'; r.onclick = () => openArt(art);
-                r.innerHTML = `<img src="${art.thumbnail}" class="news-thumb"><div class="news-info"><span class="badge ${art.type}">${art.type.toUpperCase()}</span><h2 style="font-size:22px; color:white; margin:10px 0;">${art.title[l]}</h2><span style="color:var(--primary-color); font-weight:bold; font-size:14px;" data-i18n="read_more">${translations[l].read_more} &rarr;</span></div>`;
-                c.appendChild(r);
-            });
-            // Check for Deep Link
-            const p = new URLSearchParams(window.location.search);
-            if(p.has('id')) {
-                const f = newsData.find(n => n.id == p.get('id'));
-                if(f) openArt(f);
-            }
-        }
-        function openArt(art) {
-            currentArtId = art.id;
-            const l = localStorage.getItem('app_lang') || 'en', b = document.getElementById('artBody');
-            document.getElementById('artTitle').innerText = art.title[l]; document.getElementById('artDate').innerText = art.date;
-            document.getElementById('copyNewsBtn').innerText = translations[l].copy_link;
-            b.innerHTML = ""; art.content.forEach(bl => {
-                if(bl.type==='text') b.innerHTML += `<p class="article-text">${bl[l]}</p>`;
-                else if(bl.type==='image') b.innerHTML += `<img src="${bl.url}" class="article-image">`;
-                else if(bl.type==='video') b.innerHTML += `<div class="iframe-wrapper"><iframe src="${bl.url}" allowfullscreen></iframe></div>`;
-            });
-            document.getElementById('articleOverlay').classList.add('active');
-        }
-        function closeArt() { document.getElementById('articleOverlay').classList.remove('active'); document.getElementById('artBody').innerHTML = ""; currentArtId = null; }
-        document.getElementById('articleOverlay').addEventListener('click', (e) => { if(e.target.id === 'articleOverlay') closeArt(); });
-        
-        function copyNewsLink() {
-            const url = `${window.location.origin}${window.location.pathname}?id=${currentArtId}`;
-            const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
-            const b = document.getElementById('copyNewsBtn'), lang = localStorage.getItem('app_lang') || 'en';
-            b.innerText = translations[lang].link_copied; b.style.background = "var(--primary-color)"; b.style.color = "black";
-            setTimeout(() => { b.innerText = translations[lang].copy_link; b.style.background = "rgba(255,255,255,0.05)"; b.style.color = "white"; }, 2000);
-        }
-        window.onload = renderNewsPage;
+        let currentOpenId = null;
+        function renderNewsPage() { const c = document.getElementById('newsTimeline'), l = localStorage.getItem('app_lang') || 'en'; if(typeof newsData !== 'undefined'){ [...newsData].sort((a,b)=>new Date(b.date)-new Date(a.date)).forEach(art => { const r = document.createElement('div'); r.className = 'news-row'; r.onclick = () => openArt(art); r.innerHTML = `<img src="${art.thumbnail}" class="news-thumb"><div class="news-info"><span class="badge ${art.type}">${art.type.toUpperCase()}</span><h2 style="font-size:22px; color:white; margin:10px 0;">${art.title[l] || art.title['en']}</h2><span style="color:var(--primary-color); font-weight:bold; font-size:14px;" data-i18n="read_more">${translations[l].read_more}</span></div>`; c.appendChild(r); }); const p = new URLSearchParams(window.location.search); if(p.has('id')) { const f = newsData.find(n => n.id == p.get('id')); if(f) openArt(f); } } }
+        function openArt(art) { currentOpenId = art.id; const l = localStorage.getItem('app_lang') || 'en', b = document.getElementById('artBody'); document.getElementById('artTitle').innerText = art.title[l] || art.title['en']; document.getElementById('artDate').innerText = art.date; document.getElementById('copyNewsBtn').innerText = translations[l].copy_link; b.innerHTML = ""; art.content.forEach(bl => { if(bl.type==='text') b.innerHTML += `<p class="article-text">${bl[l] || bl['en']}</p>`; else if(bl.type==='image') b.innerHTML += `<img src="${bl.url}" class="article-image">`; else if(bl.type==='video') b.innerHTML += `<div class="iframe-wrapper"><iframe src="${bl.url}" allowfullscreen></iframe></div>`; }); document.getElementById('articleOverlay').classList.add('active'); if(typeof playSwoosh === 'function') playSwoosh(); }
+        function closeArt() { document.getElementById('articleOverlay').classList.remove('active'); document.getElementById('artBody').innerHTML = ""; currentOpenId = null; }
+        function copyNewsLink() { const url = `${window.location.origin}${window.location.pathname}?id=${currentOpenId}`; const el = document.createElement('textarea'); el.value = url; document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el); const btn = document.getElementById('copyNewsBtn'), lang = localStorage.getItem('app_lang') || 'en'; btn.innerText = translations[lang].link_copied; btn.style.background = "var(--primary-color)"; btn.style.color = "black"; setTimeout(() => { btn.innerText = translations[lang].copy_link; btn.style.background = "rgba(255,255,255,0.05)"; btn.style.color = "white"; }, 2000); }
+        document.getElementById('articleOverlay').addEventListener('click', (e) => { if(e.target.id === 'articleOverlay') closeArt(); }); window.onload = renderNewsPage;
     </script>
 </body>
 </html>
