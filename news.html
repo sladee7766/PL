@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valorant News</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- LINKED CONFIG FILE -->
+    <script src="config.js"></script>
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="logo-link">
+            <img src="foto/logo.png" alt="Website Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
+            <a href="news.html" data-text="navNews">News</a>
+            <a href="videos.html" data-text="navVideos">Videos</a>
+            <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="section-title" data-text="newsTitle">Valorant Updates & News</h2>
+        
+        <div id="news-container" class="news-grid">
+            <!-- JavaScript will automatically populate the news articles here! -->
+        </div>
+    </div>
+
+    <footer class="beta-footer" data-text="footerText">
+        BETA 1.0.0
+    </footer>
+
+    <!-- Scripts -->
+    <script src="news_data.js"></script>
+    <script>
+        const container = document.getElementById('news-container');
+
+        if (typeof newsData !== 'undefined') {
+            // This loop goes through every article in your news_data.js file
+            newsData.forEach(article => {
+                
+                // Format the date nicely
+                const dateObj = new Date(article.date);
+                const formattedDate = dateObj.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+
+                const card = document.createElement('div');
+                card.className = 'news-card';
+                
+                card.innerHTML = `
+                    <div class="news-image" style="background-image: url('${article.image}');">
+                        <div class="news-category">${article.category}</div>
+                    </div>
+                    <div class="news-content">
+                        <div class="news-date">${formattedDate}</div>
+                        <h3 class="news-title">${article.title}</h3>
+                        <p class="news-summary">${article.summary}</p>
+                        <a href="${article.link}" class="news-read-more" target="_blank">${siteTexts.newsReadMore} →</a>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+    </script>
+
+</body>
+</html>

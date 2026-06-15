@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="logo-link">
+            <img src="foto/logo.png" alt="Website Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
+            <a href="news.html" data-text="navNews">News</a>
+            <a href="videos.html" data-text="navVideos">Videos</a>
+            <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="section-title" data-text="submitPageTitle">Submit or Report</h2>
+        
+        <div class="submit-container">
+            <form id="submitForm" onsubmit="handleSubmission(event)">
+                
+                <!-- Submission Type -->
+                <div class="form-group">
+                    <label for="type" data-text="submitLabelType">Submission Type</label>
+                    <select id="type" class="form-control" required>
+                        <option value="Lineup Addition">Lineup Addition</option>
+                        <option value="Crosshair Addition">Crosshair Addition</option>
+                        <option value="News/Video Addition">News/Video Addition</option>
+                        <option value="Report Bug">Report Bug</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username" data-text="submitLabelUser">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Your name or Discord tag" required>
+                </div>
+
+                <!-- Title -->
+                <div class="form-group">
+                    <label for="title" data-text="submitLabelTitle">Title</label>
+                    <input type="text" id="title" class="form-control" placeholder="E.g. Sova Haven Recon Lineup" required>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label for="desc" data-text="submitLabelDesc">Description</label>
+                    <textarea id="desc" class="form-control" placeholder="Explain the lineup, bug, or addition..." required></textarea>
+                </div>
+
+                <!-- Video / Link -->
+                <div class="form-group">
+                    <label for="video" data-text="submitLabelVideo">Video / Image Link</label>
+                    <input type="url" id="video" class="form-control" placeholder="https://youtube.com/... or https://imgur.com/... (Optional)">
+                </div>
+
+                <!-- Privacy Checkbox -->
+                <div class="form-group checkbox-group">
+                    <input type="checkbox" id="privacyCheck" required>
+                    <label for="privacyCheck" data-text="submitLabelCheck">I agree that my submitted data and IP address will be transferred and stored.</label>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submitBtn" class="submit-btn" data-text="submitBtn">Send Submission</button>
+
+                <!-- Alert Box -->
+                <div id="alertBox" class="alert-box"></div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="beta-footer" data-text="footerText">
+        BETA 1.0.0
+    </footer>
+
+    <!-- Logic to talk to your new Cloudflare Worker Securely -->
+    <script>
+        // 🛑 PASTE YOUR CLOUDFLARE WORKER URL HERE 🛑
+        const WORKER_URL = "https://lineups-submit.skulled4545.workers.dev/submit";
+
+        async function handleSubmission(event) {
+            event.preventDefault(); // Prevents the page from refreshing
+
+            const btn = document.getElementById('submitBtn');
+            const alertBox = document.getElementById('alertBox');
+            
+            // Disable button to prevent spam clicking
+            btn.disabled = true;
+            btn.innerText = "Processing...";
+            alertBox.style.display = "none";
+
+            // 1. Gather Form Data
+            const formData = {
+                type: document.getElementById('type').value,
+                username: document.getElementById('username').value,
+                title: document.getElementById('title').value,
+                desc: document.getElementById('desc').value,
+                video: document.getElementById('video').value
+            };
+
+            // 2. Send Data SECURELY to the Middleman (Cloudflare)
+            try {
+                if (WORKER_URL === "https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev") {
+                    throw new Error("You forgot to paste your Cloudflare Worker URL in the code!");
+                }
+
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) throw new Error('Failed to send data to server');
+                
+                // 3. Show Success message
+                alertBox.className = "alert-box alert-success";
+                alertBox.innerText = siteTexts.submitSuccess; // Text from config.js
+                alertBox.style.display = "block";
+                
+                // Clear the form
+                document.getElementById('submitForm').reset();
+
+            } catch (error) {
+                console.error(error);
+                alertBox.className = "alert-box alert-error";
+                alertBox.innerText = error.message.includes("forgot") ? error.message : siteTexts.submitError;
+                alertBox.style.display = "block";
+            }
+
+            // Restore Button
+            btn.disabled = false;
+            btn.innerText = siteTexts.submitBtn;
+        }
+    </script>
+</body>
+</html>

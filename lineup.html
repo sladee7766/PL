@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lineup Viewer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- LINKED CONFIG FILE -->
+    <script src="config.js"></script>
+</head>
+<body>
+    
+    <div class="top-bar">
+        <a href="index.html" class="logo-link">
+            <img src="foto/logo.png" alt="Website Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
+            <a href="news.html" data-text="navNews">News</a>
+            <a href="videos.html" data-text="navVideos">Videos</a>
+            <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+    </div>
+
+    <div class="main-content lineup-wrapper">
+        
+        <!-- STEP 1: MAP SELECTION -->
+        <div id="map-selection" class="selection-section">
+            <h2 class="section-title" data-text="lineupSelectMap">Select a Map</h2>
+            <div class="map-grid">
+                <div class="map-card" onclick="selectMap('ascent', 'map_backgrounds/ascent.jpg')">
+                    <img src="map_backgrounds/ascent.jpg" alt="Ascent">
+                    <span>ASCENT</span>
+                </div>
+                <div class="map-card" onclick="selectMap('breeze', 'map_backgrounds/breeze.jpg')">
+                    <img src="map_backgrounds/breeze.jpg" alt="Breeze">
+                    <span>BREEZE</span>
+                </div>
+                <div class="map-card" onclick="selectMap('fracture', 'map_backgrounds/fracture.jpg')">
+                    <img src="map_backgrounds/fracture.jpg" alt="Fracture">
+                    <span>FRACTURE</span>
+                </div>
+                <div class="map-card" onclick="selectMap('haven', 'map_backgrounds/haven.jpg')">
+                    <img src="map_backgrounds/haven.jpg" alt="Haven">
+                    <span>HAVEN</span>
+                </div>
+                <div class="map-card" onclick="selectMap('lotus', 'map_backgrounds/lotus.jpg')">
+                    <img src="map_backgrounds/lotus.jpg" alt="Lotus">
+                    <span>LOTUS</span>
+                </div>
+                <div class="map-card" onclick="selectMap('pearl', 'map_backgrounds/pearl.jpg')">
+                    <img src="map_backgrounds/pearl.jpg" alt="Pearl">
+                    <span>PEARL</span>
+                </div>
+                <div class="map-card" onclick="selectMap('split', 'map_backgrounds/split.jpg')">
+                    <img src="map_backgrounds/split.jpg" alt="Split">
+                    <span>SPLIT</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: AGENT SELECTION -->
+        <div id="agent-selection" class="selection-section" style="display: none;">
+            <div class="controls-header">
+                <button class="back-btn" onclick="showMaps()" data-text="lineupBackToMaps">← Back to Maps</button>
+                <h2 class="section-title" id="selected-map-title" data-text="lineupSelectAgent">Select an Agent</h2>
+            </div>
+            
+            <div class="agent-grid">
+                <div class="agent-card" onclick="selectAgent('brimstone')"><img src="agents/brimstone.png" alt="Brimstone"></div>
+                <div class="agent-card" onclick="selectAgent('cypher')"><img src="agents/cypher.png" alt="Cypher"></div>
+                <div class="agent-card" onclick="selectAgent('deadlock')"><img src="agents/deadlock.png" alt="Deadlock"></div>
+                <div class="agent-card" onclick="selectAgent('fade')"><img src="agents/fade.png" alt="Fade"></div>
+                <div class="agent-card" onclick="selectAgent('kayo')"><img src="agents/kayo.png" alt="Kayo"></div>
+                <div class="agent-card" onclick="selectAgent('killjoy')"><img src="agents/killjoy.png" alt="Killjoy"></div>
+                <div class="agent-card" onclick="selectAgent('miks')"><img src="agents/miks.png" alt="Miks"></div>
+                <div class="agent-card" onclick="selectAgent('sova')"><img src="agents/sova.png" alt="Sova"></div>
+                <div class="agent-card" onclick="selectAgent('veto')"><img src="agents/veto.png" alt="Veto"></div>
+                <div class="agent-card" onclick="selectAgent('viper')"><img src="agents/viper.png" alt="Viper"></div>
+                <div class="agent-card" onclick="selectAgent('vyse')"><img src="agents/vyse.png" alt="Vyse"></div>
+            </div>
+        </div>
+
+        <!-- STEP 3: VIEWER AREA -->
+        <div id="viewer-section" class="selection-section" style="display: none;">
+            <div class="controls-header">
+                <button class="back-btn" onclick="showAgents()" data-text="lineupBackToAgents">← Back to Agents</button>
+                <h2 id="viewer-title" class="section-title">Lineups</h2>
+            </div>
+            
+            <div class="viewer-layout">
+                <div class="map-layout-container">
+                    <div class="map-relative-wrapper">
+                        <img id="current-map-layout" src="" alt="Map Layout" onclick="getMapCoordinates(event)">
+                        <svg id="lineup-svg"></svg>
+                        <div id="pins-container"></div>
+                    </div>
+                </div>
+                
+                <div id="lineup-details" class="lineup-info">
+                    <h3 id="panel-title" data-text="lineupGuideTitle">Map Guide</h3>
+                    <p id="panel-desc" data-text="lineupGuideDesc"></p>
+                    <div id="video-container"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="beta-footer" data-text="footerText">
+        BETA 1.0.0
+    </footer>
+
+    <!-- Scripts -->
+    <script src="lineups.js"></script>
+    <script>
+        let currentMap = "";
+        let currentAgent = "";
+        let activeGroupIndex = null;
+        let currentGroups = []; 
+
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lineupId = urlParams.get('id'); 
+            
+            if (lineupId && typeof lineupsData !== 'undefined') {
+                const selectedLineup = lineupsData.find(l => l.id === lineupId);
+                
+                if (selectedLineup) {
+                    selectMap(selectedLineup.map, '');
+                    selectAgent(selectedLineup.agent);
+                    
+                    setTimeout(() => {
+                        const originPin = document.getElementById(`origin-${lineupId}`);
+                        if (originPin) {
+                            const groupClass = Array.from(originPin.classList).find(c => c.startsWith('origin-group-'));
+                            const index = parseInt(groupClass.replace('origin-group-', ''));
+                            
+                            const targetPin = document.querySelector(`.target-group-${index}`);
+                            if(targetPin) targetPin.click();
+                            
+                            originPin.click();
+                            document.getElementById('viewer-section').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 100);
+                }
+            }
+        };
+
+        function selectMap(mapName, bgImage) {
+            currentMap = mapName;
+            document.getElementById('map-selection').style.display = 'none';
+            document.getElementById('agent-selection').style.display = 'block';
+            document.getElementById('selected-map-title').innerText = `${mapName.toUpperCase()} - ${siteTexts.lineupSelectAgent}`; 
+        }
+
+        function showMaps() {
+            document.getElementById('map-selection').style.display = 'block';
+            document.getElementById('agent-selection').style.display = 'none';
+        }
+
+        function selectAgent(agentName) {
+            currentAgent = agentName;
+            document.getElementById('agent-selection').style.display = 'none';
+            document.getElementById('viewer-section').style.display = 'block';
+            
+            document.getElementById('current-map-layout').src = `maps/${currentMap}.png`;
+            document.getElementById('viewer-title').innerText = `${currentMap.toUpperCase()} - ${currentAgent.toUpperCase()}`;
+            
+            resetViewerPanel();
+            renderPins();
+        }
+
+        function showAgents() {
+            document.getElementById('agent-selection').style.display = 'block';
+            document.getElementById('viewer-section').style.display = 'none';
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        function resetViewerPanel() {
+            activeGroupIndex = null;
+            document.getElementById('panel-title').innerHTML = siteTexts.lineupGuideTitle; 
+            document.getElementById('panel-desc').innerHTML = siteTexts.lineupGuideDesc; 
+            document.getElementById('video-container').innerHTML = "";
+            document.getElementById('lineup-svg').innerHTML = "";
+        }
+
+        function renderPins() {
+            const container = document.getElementById('pins-container');
+            container.innerHTML = ""; 
+
+            const filteredLineups = lineupsData.filter(l => l.map === currentMap && l.agent === currentAgent);
+
+            const groupsObj = {};
+            filteredLineups.forEach(l => {
+                const key = `${l.target[0]}-${l.target[1]}`;
+                if (!groupsObj[key]) {
+                    groupsObj[key] = { target: l.target, lineups: [] };
+                }
+                groupsObj[key].lineups.push(l);
+            });
+            
+            currentGroups = Object.values(groupsObj);
+
+            currentGroups.forEach((group, index) => {
+                const targetPin = document.createElement('div');
+                targetPin.className = `pin pin-target target-group-${index}`;
+                targetPin.style.left = `${group.target[0]}%`;
+                targetPin.style.top = `${group.target[1]}%`;
+                
+                targetPin.onmouseenter = () => handleTargetHover(group, index);
+                targetPin.onmouseleave = () => handleTargetLeave();
+                targetPin.onclick = () => handleTargetClick(group, index);
+                
+                container.appendChild(targetPin);
+
+                group.lineups.forEach(lineup => {
+                    const originPin = document.createElement('div');
+                    originPin.className = `pin pin-origin origin-group-${index}`;
+                    originPin.id = `origin-${lineup.id}`; 
+                    originPin.style.left = `${lineup.origin[0]}%`;
+                    originPin.style.top = `${lineup.origin[1]}%`;
+                    
+                    originPin.onclick = (e) => {
+                        e.stopPropagation(); 
+                        handleOriginClick(lineup);
+                    };
+
+                    container.appendChild(originPin);
+                });
+            });
+        }
+
+        function handleTargetHover(group, index) {
+            if (activeGroupIndex === index) return; 
+            showOrigins(index);
+            drawLines(group);
+        }
+
+        function handleTargetLeave() {
+            if (activeGroupIndex !== null) {
+                showOrigins(activeGroupIndex);
+                drawLines(currentGroups[activeGroupIndex]);
+            } else {
+                hideAllOrigins();
+                clearLines();
+            }
+        }
+
+        function handleTargetClick(group, index) {
+            activeGroupIndex = index;
+            showOrigins(index);
+            drawLines(group);
+            
+            document.getElementById('panel-title').innerHTML = siteTexts.lineupTargetLocked; 
+            document.getElementById('panel-desc').innerHTML = siteTexts.lineupSelectGreenPin; 
+            document.getElementById('video-container').innerHTML = "";
+        }
+
+        // --- NEW YOUTUBE LOGIC ---
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return "";
+            let videoId = "";
+            if (url.includes("youtube.com/watch?v=")) {
+                videoId = url.split("v=")[1].split("&")[0];
+            } else if (url.includes("youtu.be/")) {
+                videoId = url.split("youtu.be/")[1].split("?")[0];
+            } else if (url.includes("youtube.com/embed/")) {
+                return url; // It's already an embed link
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
+        }
+
+        function handleOriginClick(lineup) {
+            document.getElementById('panel-title').innerText = lineup.title;
+            document.getElementById('panel-desc').innerText = lineup.desc;
+            
+            if (lineup.vid) {
+                const embedUrl = getYouTubeEmbedUrl(lineup.vid);
+                // We use an iframe now instead of a video tag, wrapped in the new CSS class
+                document.getElementById('video-container').innerHTML = `
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="${embedUrl}" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                `;
+            } else {
+                document.getElementById('video-container').innerHTML = `<p style="color:red; margin-top: 20px;">${siteTexts.lineupNoVideo}</p>`;
+            }
+        }
+
+        function showOrigins(index) {
+            hideAllOrigins();
+            document.querySelectorAll(`.origin-group-${index}`).forEach(pin => pin.style.display = 'block');
+        }
+
+        function hideAllOrigins() {
+            document.querySelectorAll('.pin-origin').forEach(pin => pin.style.display = 'none');
+        }
+
+        function drawLines(group) {
+            const svg = document.getElementById('lineup-svg');
+            svg.innerHTML = ""; 
+            
+            group.lineups.forEach(lineup => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', `${group.target[0]}%`);
+                line.setAttribute('y1', `${group.target[1]}%`);
+                line.setAttribute('x2', `${lineup.origin[0]}%`);
+                line.setAttribute('y2', `${lineup.origin[1]}%`);
+                line.setAttribute('class', 'lineup-line');
+                svg.appendChild(line);
+            });
+        }
+
+        function clearLines() {
+            document.getElementById('lineup-svg').innerHTML = "";
+        }
+
+        function getMapCoordinates(event) {
+            if (event.shiftKey) {
+                const img = event.target;
+                const rect = img.getBoundingClientRect();
+                const x = ((event.clientX - rect.left) / rect.width) * 100;
+                const y = ((event.clientY - rect.top) / rect.height) * 100;
+                
+                const coordinates = `[${x.toFixed(2)}, ${y.toFixed(2)}]`;
+                alert(`Lineup Coordinates (Check Console to copy!)\n\n${coordinates}`);
+                console.log(`New Lineup Coordinates -> ${coordinates}`);
+            }
+        }
+    </script>
+</body>
+</html>

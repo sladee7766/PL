@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crosshairs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- LINKED CONFIG FILE -->
+    <script src="config.js"></script>
+</head>
+<body>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <a href="index.html" class="logo-link">
+            <img src="foto/logo.png" alt="Website Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
+            <a href="news.html" data-text="navNews">News</a>
+            <a href="videos.html" data-text="navVideos">Videos</a>
+            <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <h2 class="section-title" data-text="crosshairsTitle">Pro & Community Crosshairs</h2>
+        
+        <div id="crosshairs-container" class="crosshair-grid">
+            <!-- JS will populate cards here -->
+        </div>
+    </div>
+
+    <footer class="beta-footer" data-text="footerText">
+        BETA 1.0.0
+    </footer>
+
+    <!-- Scripts -->
+    <script src="crosshairs_data.js"></script>
+    <script>
+        const container = document.getElementById('crosshairs-container');
+
+        if (typeof crosshairsData !== 'undefined') {
+            crosshairsData.forEach((ch) => {
+                const card = document.createElement('div');
+                card.className = 'crosshair-card';
+                
+                const title = document.createElement('div');
+                title.className = 'crosshair-title';
+                title.innerText = ch.name;
+
+                const canvasContainer = document.createElement('div');
+                canvasContainer.className = 'crosshair-canvas-container';
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = 100;
+                canvas.height = 100;
+                drawValorantCrosshair(canvas, ch.code);
+                
+                canvasContainer.appendChild(canvas);
+
+                const btn = document.createElement('button');
+                btn.className = 'copy-btn';
+                btn.innerText = siteTexts.crosshairCopyBtn; // Pulled from config.js
+                btn.onclick = () => copyCode(ch.code);
+
+                card.appendChild(title);
+                card.appendChild(canvasContainer);
+                card.appendChild(btn);
+
+                container.appendChild(card);
+            });
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code).then(() => {
+                alert(siteTexts.crosshairCopiedAlert); // Pulled from config.js
+            });
+        }
+    </script>
+
+</body>
+</html>
