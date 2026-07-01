@@ -234,122 +234,129 @@ img {
     color: #121212;
 }
 
-/* ========== LINEUP PAGE CSS ========== */
-.lineup-wrapper {
-    padding-top: 40px;
-}
 
-.map-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
-
-.map-card {
-    position: relative;
-    height: 160px;
-    border-radius: 8px;
-    overflow: hidden;
-    cursor: pointer;
-    border: 2px solid transparent;
-    transition: border-color 0.3s, transform 0.3s;
-}
-
-.map-card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.5);
-    transition: filter 0.3s;
-}
-
-.map-card span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: 'Oswald', sans-serif;
-    font-size: 26px;
-    font-weight: bold;
-    letter-spacing: 3px;
-    color: #fff;
-    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
-    transition: color 0.3s;
-}
-
-.map-card:hover {
-    border-color: #D4AF37;
-    transform: translateY(-5px);
-}
-
-.map-card:hover img {
-    filter: brightness(0.8);
-}
-
-.map-card:hover span {
-    color: #D4AF37;
-}
-
-.controls-header {
+/* ========== NEW DASHBOARD LINEUP PAGE CSS ========== */
+.dashboard-layout {
     display: flex;
-    align-items: center;
     gap: 30px;
-    margin-bottom: 30px;
+    padding: 40px;
+    max-width: 1600px; /* Made it wider for the dashboard feel */
 }
 
-.controls-header .section-title {
-    margin-bottom: 0;
-    border: none;
-    padding: 0;
-}
-
-.back-btn {
-    background: transparent;
-    border: 2px solid #D4AF37;
-    color: #D4AF37;
-    padding: 10px 20px;
-    font-family: 'Oswald', sans-serif;
-    font-size: 16px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.3s;
-}
-
-.back-btn:hover {
-    background-color: #D4AF37;
-    color: #121212;
-}
-
-.agent-grid {
+/* Sidebar for Dashboard */
+.dashboard-sidebar {
+    width: 320px;
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 20px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    flex-direction: column;
+    gap: 30px;
+    max-height: 80vh;
+    overflow-y: auto; /* Allows sidebar to scroll if many agents */
 }
 
-.agent-card {
-    width: 90px;
-    height: 90px;
+/* Custom Scrollbar for Sidebar */
+.dashboard-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+.dashboard-sidebar::-webkit-scrollbar-track {
+    background: #121212; 
+}
+.dashboard-sidebar::-webkit-scrollbar-thumb {
+    background: #444; 
+    border-radius: 4px;
+}
+.dashboard-sidebar::-webkit-scrollbar-thumb:hover {
+    background: #D4AF37; 
+}
+
+.sidebar-title {
+    font-family: 'Oswald', sans-serif;
+    color: #D4AF37;
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 15px 0;
+    border-bottom: 2px solid #333;
+    padding-bottom: 5px;
+}
+
+/* Sidebar Grids */
+.sidebar-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.sidebar-agent-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+/* Sidebar Buttons */
+.dash-btn {
     background-color: #232023;
     border: 2px solid #444;
-    border-radius: 8px;
-    cursor: pointer;
+    border-radius: 4px;
+    color: #E0E0E0;
+    font-family: 'Oswald', sans-serif;
     padding: 10px;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-.agent-card img {
-    width: 100%;
-    height: 100%;
+.dash-btn img {
+    width: 40px;
+    height: 40px;
     object-fit: contain;
+    margin-bottom: 5px;
 }
 
-.agent-card:hover {
-    border-color: #D4AF37;
+.dash-btn:hover {
     background-color: #333;
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+    border-color: #D4AF37;
+}
+
+/* Active Highlight Class */
+.dash-btn.active {
+    background-color: rgba(212, 175, 55, 0.2);
+    border-color: #D4AF37;
+    color: #D4AF37;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+}
+
+/* Dashboard Main Viewer Area */
+.dashboard-viewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.viewer-header-title {
+    font-family: 'Oswald', sans-serif;
+    color: #D4AF37;
+    font-size: 36px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.placeholder-text {
+    color: #888;
+    font-size: 18px;
+    text-align: center;
+    margin-top: 100px;
+    font-family: 'Montserrat', sans-serif;
 }
 
 .viewer-layout {
