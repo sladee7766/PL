@@ -19,19 +19,25 @@
         </a>
         <div class="nav-links">
             <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="favorites.html" data-text="navFavorites">Favorites</a>
             <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
             <a href="news.html" data-text="navNews">News</a>
             <a href="videos.html" data-text="navVideos">Videos</a>
             <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+        
+        <!-- NEW: Search Bar (Only on this page) -->
+        <div class="search-container">
+            <input type="text" id="lineup-search" placeholder="Search lineups (e.g. Sova Haven)..." onkeyup="handleSearch()">
+            <div id="search-results" class="search-results"></div>
         </div>
     </div>
 
     <!-- NEW DASHBOARD LAYOUT -->
     <div class="dashboard-layout">
         
-        <!-- LEFT SIDEBAR: Map and Agent Selection -->
+        <!-- LEFT SIDEBAR -->
         <aside class="dashboard-sidebar">
-            
             <h3 class="sidebar-title" data-text="lineupSelectMap">Select a Map</h3>
             <div class="sidebar-grid">
                 <div class="dash-btn map-btn" id="btn-map-ascent" onclick="selectMap('ascent')">ASCENT</div>
@@ -57,23 +63,17 @@
                 <div class="dash-btn agent-btn" id="btn-agent-viper" onclick="selectAgent('viper')"><img src="agents/viper.png" alt="Viper"></div>
                 <div class="dash-btn agent-btn" id="btn-agent-vyse" onclick="selectAgent('vyse')"><img src="agents/vyse.png" alt="Vyse"></div>
             </div>
-
         </aside>
 
         <!-- RIGHT MAIN VIEWER -->
         <main class="dashboard-viewer">
-            
             <h2 id="viewer-title" class="viewer-header-title">SELECT A MAP AND AGENT</h2>
             
-            <!-- Placeholder before selecting both -->
             <div id="placeholder-text" class="placeholder-text">
                 Please select both a Map and an Agent from the sidebar to view lineups.
             </div>
 
-            <!-- The Actual Viewer (Hidden until both map and agent are clicked) -->
             <div id="viewer-layout" class="viewer-layout" style="display: none;">
-                
-                <!-- Map Area -->
                 <div class="map-layout-container">
                     <div class="map-relative-wrapper">
                         <img id="current-map-layout" src="" alt="Map Layout" onclick="getMapCoordinates(event)">
@@ -82,24 +82,19 @@
                     </div>
                 </div>
                 
-                <!-- Video & Details Area -->
                 <div id="lineup-details" class="lineup-info">
                     <h3 id="panel-title" data-text="lineupGuideTitle">Map Guide</h3>
                     <p id="panel-desc" data-text="lineupGuideDesc"></p>
                     <div id="video-container"></div>
                 </div>
-
             </div>
-
         </main>
-
     </div>
 
     <footer class="beta-footer" data-text="footerText">
         BETA 1.0.0
     </footer>
 
-    <!-- Scripts -->
     <script src="lineups.js"></script>
     <script>
         let currentMap = "";
@@ -107,58 +102,102 @@
         let activeGroupIndex = null;
         let currentGroups = []; 
 
+        // Extract the loading logic so the Search Bar can use it too!
+        function loadLineupById(lineupId) {
+            const selectedLineup = lineupsData.find(l => l.id === lineupId);
+            if (selectedLineup) {
+                selectMap(selectedLineup.map);
+                selectAgent(selectedLineup.agent);
+                
+                setTimeout(() => {
+                    const originPin = document.getElementById(`origin-${lineupId}`);
+                    if (originPin) {
+                        const groupClass = Array.from(originPin.classList).find(c => c.startsWith('origin-group-'));
+                        const index = parseInt(groupClass.replace('origin-group-', ''));
+                        
+                        const targetPin = document.querySelector(`.target-group-${index}`);
+                        if(targetPin) targetPin.click();
+                        
+                        originPin.click();
+                    }
+                }, 100);
+            }
+        }
+
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const lineupId = urlParams.get('id'); 
-            
             if (lineupId && typeof lineupsData !== 'undefined') {
-                const selectedLineup = lineupsData.find(l => l.id === lineupId);
-                
-                if (selectedLineup) {
-                    // Auto-select in the new dashboard
-                    selectMap(selectedLineup.map);
-                    selectAgent(selectedLineup.agent);
-                    
-                    setTimeout(() => {
-                        const originPin = document.getElementById(`origin-${lineupId}`);
-                        if (originPin) {
-                            const groupClass = Array.from(originPin.classList).find(c => c.startsWith('origin-group-'));
-                            const index = parseInt(groupClass.replace('origin-group-', ''));
-                            
-                            const targetPin = document.querySelector(`.target-group-${index}`);
-                            if(targetPin) targetPin.click();
-                            
-                            originPin.click();
-                            // Clear URL so it doesn't refresh automatically next time
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                        }
-                    }, 100);
-                }
+                loadLineupById(lineupId);
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         };
 
+        // NEW: Search Bar Logic
+        function handleSearch() {
+            const query = document.getElementById('lineup-search').value.toLowerCase();
+            const resultsBox = document.getElementById('search-results');
+            resultsBox.innerHTML = '';
+            
+            if (!query) { 
+                resultsBox.style.display = 'none'; 
+                return; 
+            }
+
+            // Look for matching map, agent, or title
+            const matches = lineupsData.filter(l => 
+                l.title.toLowerCase().includes(query) || 
+                l.agent.toLowerCase().includes(query) || 
+                l.map.toLowerCase().includes(query)
+            );
+
+            if (matches.length === 0) {
+                resultsBox.style.display = 'block';
+                resultsBox.innerHTML = '<div class="search-item" style="color:#888;">No results found...</div>';
+                return;
+            }
+
+            resultsBox.style.display = 'block';
+            
+            // Show top 5 matches
+            matches.slice(0, 5).forEach(l => {
+                const div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerText = `${l.agent.toUpperCase()} ${l.map.toUpperCase()} - ${l.title}`;
+                
+                // When clicked, clear search and load lineup!
+                div.onclick = () => {
+                    document.getElementById('lineup-search').value = '';
+                    resultsBox.style.display = 'none';
+                    loadLineupById(l.id);
+                };
+                resultsBox.appendChild(div);
+            });
+        }
+
+        // Close search dropdown if clicked outside
+        document.addEventListener('click', (e) => {
+            if(!e.target.closest('.search-container')) {
+                document.getElementById('search-results').style.display = 'none';
+            }
+        });
+
+        // Dashboard logic
         function selectMap(mapName) {
             currentMap = mapName;
-            
-            // Remove active class from all map buttons, then add to the clicked one
             document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-map-${mapName}`).classList.add('active');
-
             checkAndRender();
         }
 
         function selectAgent(agentName) {
             currentAgent = agentName;
-            
-            // Remove active class from all agent buttons, then add to the clicked one
             document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`btn-agent-${agentName}`).classList.add('active');
-
             checkAndRender();
         }
 
         function checkAndRender() {
-            // Only show the viewer if BOTH are selected
             if (currentMap !== "" && currentAgent !== "") {
                 document.getElementById('placeholder-text').style.display = 'none';
                 document.getElementById('viewer-layout').style.display = 'flex';
@@ -258,36 +297,32 @@
         function getYouTubeEmbedUrl(url) {
             if (!url) return "";
             let videoId = "";
-            if (url.includes("youtube.com/watch?v=")) {
-                videoId = url.split("v=")[1].split("&")[0];
-            } else if (url.includes("youtu.be/")) {
-                videoId = url.split("youtu.be/")[1].split("?")[0];
-            } else if (url.includes("youtube.com/embed/")) {
-                return url; 
-            }
+            if (url.includes("youtube.com/watch?v=")) videoId = url.split("v=")[1].split("&")[0];
+            else if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
+            else if (url.includes("youtube.com/embed/")) return url; 
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
+        // NEW: Display the Favorite Heart directly next to the Title when viewing!
         function handleOriginClick(lineup) {
-            document.getElementById('panel-title').innerText = lineup.title;
+            const heartIcon = isFavorite(lineup.id) ? '💛' : '🤍';
+            
+            document.getElementById('panel-title').innerHTML = `
+                ${lineup.title}
+                <span class="fav-btn-inline" onclick="toggleFavorite('${lineup.id}', event, this)">${heartIcon}</span>
+            `;
+            
             document.getElementById('panel-desc').innerText = lineup.desc;
             
             if (lineup.vid) {
                 const embedUrl = getYouTubeEmbedUrl(lineup.vid);
                 document.getElementById('video-container').innerHTML = `
                     <div class="video-wrapper">
-                        <iframe 
-                            src="${embedUrl}" 
-                            title="YouTube video player" 
-                            frameborder="0" 
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                            referrerpolicy="strict-origin-when-cross-origin" 
-                            allowfullscreen>
-                        </iframe>
+                        <iframe src="${embedUrl}" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
                     </div>
                 `;
             } else {
-                document.getElementById('video-container').innerHTML = `<p style="color:red; margin-top: 20px;">${siteTexts.lineupNoVideo}</p>`;
+                document.getElementById('video-container').innerHTML = `<p style="color:red;">${siteTexts.lineupNoVideo}</p>`;
             }
         }
 
@@ -303,7 +338,6 @@
         function drawLines(group) {
             const svg = document.getElementById('lineup-svg');
             svg.innerHTML = ""; 
-            
             group.lineups.forEach(lineup => {
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', `${group.target[0]}%`);
@@ -315,9 +349,7 @@
             });
         }
 
-        function clearLines() {
-            document.getElementById('lineup-svg').innerHTML = "";
-        }
+        function clearLines() { document.getElementById('lineup-svg').innerHTML = ""; }
 
         function getMapCoordinates(event) {
             if (event.shiftKey) {
@@ -325,10 +357,8 @@
                 const rect = img.getBoundingClientRect();
                 const x = ((event.clientX - rect.left) / rect.width) * 100;
                 const y = ((event.clientY - rect.top) / rect.height) * 100;
-                
-                const coordinates = `[${x.toFixed(2)}, ${y.toFixed(2)}]`;
-                alert(`Lineup Coordinates (Check Console to copy!)\n\n${coordinates}`);
-                console.log(`New Lineup Coordinates -> ${coordinates}`);
+                alert(`Lineup Coordinates (Check Console to copy!)\n\n[${x.toFixed(2)}, ${y.toFixed(2)}]`);
+                console.log(`New Lineup Coordinates -> [${x.toFixed(2)}, ${y.toFixed(2)}]`);
             }
         }
     </script>
