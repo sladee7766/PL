@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorites</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="config.js"></script>
+</head>
+<body>
+    
+    <div class="top-bar">
+        <a href="index.html" class="logo-link">
+            <img src="foto/logo.png" alt="Website Logo" class="logo">
+        </a>
+        <div class="nav-links">
+            <a href="lineup.html" data-text="navLineups">Lineups</a>
+            <a href="favorites.html" data-text="navFavorites">Favorites</a>
+            <a href="crosshairs.html" data-text="navCrosshairs">Crosshairs</a>
+            <a href="news.html" data-text="navNews">News</a>
+            <a href="videos.html" data-text="navVideos">Videos</a>
+            <a href="submit.html" data-text="navSubmit">Submit</a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <h2 class="section-title" data-text="favoritesTitle">My Saved Lineups</h2>
+        
+        <div id="empty-state" class="placeholder-text" style="display: none;" data-text="favoritesEmpty">
+            You haven't saved any lineups yet. Go click some hearts!
+        </div>
+
+        <div id="favorites-container" class="rec-grid"></div>
+    </div>
+
+    <footer class="beta-footer" data-text="footerText">
+        BETA 1.0.0
+    </footer>
+
+    <script src="lineups.js"></script>
+    <script>
+        const container = document.getElementById('favorites-container');
+        const emptyState = document.getElementById('empty-state');
+        
+        let favs = JSON.parse(localStorage.getItem('lineup_favs') || '[]');
+
+        if (favs.length === 0) {
+            emptyState.style.display = 'block';
+        } else if (typeof lineupsData !== 'undefined') {
+            
+            // Find only the lineups whose ID is in the favs array
+            const myLineups = lineupsData.filter(l => favs.includes(l.id));
+
+            myLineups.forEach(lineup => {
+                const card = document.createElement('div');
+                card.className = 'rec-card';
+                card.style.backgroundImage = `url('${lineup.image}')`;
+                
+                card.onclick = () => window.location.href = `lineup.html?id=${lineup.id}`;
+
+                // Heart is automatically yellow because it's in favorites!
+                card.innerHTML = `
+                    <div class="fav-btn" onclick="toggleFavorite('${lineup.id}', event, this)">💛</div>
+                    <div class="card-content">
+                        <div class="card-category">${lineup.agent.toUpperCase()} - ${lineup.map.toUpperCase()}</div>
+                        <div class="card-title">${lineup.title}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+    </script>
+</body>
+</html>
