@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lineup Viewer</title>
+    <title>Lineup Viewer Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- LINKED CONFIG FILE -->
     <script src="config.js"></script>
 </head>
 <body>
     
+    <!-- Top Bar -->
     <div class="top-bar">
         <a href="index.html" class="logo-link">
             <img src="foto/logo.png" alt="Website Logo" class="logo">
@@ -26,73 +26,54 @@
         </div>
     </div>
 
-    <div class="main-content lineup-wrapper">
+    <!-- NEW DASHBOARD LAYOUT -->
+    <div class="dashboard-layout">
         
-        <!-- STEP 1: MAP SELECTION -->
-        <div id="map-selection" class="selection-section">
-            <h2 class="section-title" data-text="lineupSelectMap">Select a Map</h2>
-            <div class="map-grid">
-                <div class="map-card" onclick="selectMap('ascent', 'map_backgrounds/ascent.jpg')">
-                    <img src="map_backgrounds/ascent.jpg" alt="Ascent">
-                    <span>ASCENT</span>
-                </div>
-                <div class="map-card" onclick="selectMap('breeze', 'map_backgrounds/breeze.jpg')">
-                    <img src="map_backgrounds/breeze.jpg" alt="Breeze">
-                    <span>BREEZE</span>
-                </div>
-                <div class="map-card" onclick="selectMap('fracture', 'map_backgrounds/fracture.jpg')">
-                    <img src="map_backgrounds/fracture.jpg" alt="Fracture">
-                    <span>FRACTURE</span>
-                </div>
-                <div class="map-card" onclick="selectMap('haven', 'map_backgrounds/haven.jpg')">
-                    <img src="map_backgrounds/haven.jpg" alt="Haven">
-                    <span>HAVEN</span>
-                </div>
-                <div class="map-card" onclick="selectMap('lotus', 'map_backgrounds/lotus.jpg')">
-                    <img src="map_backgrounds/lotus.jpg" alt="Lotus">
-                    <span>LOTUS</span>
-                </div>
-                <div class="map-card" onclick="selectMap('pearl', 'map_backgrounds/pearl.jpg')">
-                    <img src="map_backgrounds/pearl.jpg" alt="Pearl">
-                    <span>PEARL</span>
-                </div>
-                <div class="map-card" onclick="selectMap('split', 'map_backgrounds/split.jpg')">
-                    <img src="map_backgrounds/split.jpg" alt="Split">
-                    <span>SPLIT</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- STEP 2: AGENT SELECTION -->
-        <div id="agent-selection" class="selection-section" style="display: none;">
-            <div class="controls-header">
-                <button class="back-btn" onclick="showMaps()" data-text="lineupBackToMaps">← Back to Maps</button>
-                <h2 class="section-title" id="selected-map-title" data-text="lineupSelectAgent">Select an Agent</h2>
-            </div>
+        <!-- LEFT SIDEBAR: Map and Agent Selection -->
+        <aside class="dashboard-sidebar">
             
-            <div class="agent-grid">
-                <div class="agent-card" onclick="selectAgent('brimstone')"><img src="agents/brimstone.png" alt="Brimstone"></div>
-                <div class="agent-card" onclick="selectAgent('cypher')"><img src="agents/cypher.png" alt="Cypher"></div>
-                <div class="agent-card" onclick="selectAgent('deadlock')"><img src="agents/deadlock.png" alt="Deadlock"></div>
-                <div class="agent-card" onclick="selectAgent('fade')"><img src="agents/fade.png" alt="Fade"></div>
-                <div class="agent-card" onclick="selectAgent('kayo')"><img src="agents/kayo.png" alt="Kayo"></div>
-                <div class="agent-card" onclick="selectAgent('killjoy')"><img src="agents/killjoy.png" alt="Killjoy"></div>
-                <div class="agent-card" onclick="selectAgent('miks')"><img src="agents/miks.png" alt="Miks"></div>
-                <div class="agent-card" onclick="selectAgent('sova')"><img src="agents/sova.png" alt="Sova"></div>
-                <div class="agent-card" onclick="selectAgent('veto')"><img src="agents/veto.png" alt="Veto"></div>
-                <div class="agent-card" onclick="selectAgent('viper')"><img src="agents/viper.png" alt="Viper"></div>
-                <div class="agent-card" onclick="selectAgent('vyse')"><img src="agents/vyse.png" alt="Vyse"></div>
+            <h3 class="sidebar-title" data-text="lineupSelectMap">Select a Map</h3>
+            <div class="sidebar-grid">
+                <div class="dash-btn map-btn" id="btn-map-ascent" onclick="selectMap('ascent')">ASCENT</div>
+                <div class="dash-btn map-btn" id="btn-map-breeze" onclick="selectMap('breeze')">BREEZE</div>
+                <div class="dash-btn map-btn" id="btn-map-fracture" onclick="selectMap('fracture')">FRACTURE</div>
+                <div class="dash-btn map-btn" id="btn-map-haven" onclick="selectMap('haven')">HAVEN</div>
+                <div class="dash-btn map-btn" id="btn-map-lotus" onclick="selectMap('lotus')">LOTUS</div>
+                <div class="dash-btn map-btn" id="btn-map-pearl" onclick="selectMap('pearl')">PEARL</div>
+                <div class="dash-btn map-btn" id="btn-map-split" onclick="selectMap('split')">SPLIT</div>
             </div>
-        </div>
 
-        <!-- STEP 3: VIEWER AREA -->
-        <div id="viewer-section" class="selection-section" style="display: none;">
-            <div class="controls-header">
-                <button class="back-btn" onclick="showAgents()" data-text="lineupBackToAgents">← Back to Agents</button>
-                <h2 id="viewer-title" class="section-title">Lineups</h2>
+            <h3 class="sidebar-title" data-text="lineupSelectAgent">Select an Agent</h3>
+            <div class="sidebar-agent-grid">
+                <div class="dash-btn agent-btn" id="btn-agent-brimstone" onclick="selectAgent('brimstone')"><img src="agents/brimstone.png" alt="Brimstone"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-cypher" onclick="selectAgent('cypher')"><img src="agents/cypher.png" alt="Cypher"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-deadlock" onclick="selectAgent('deadlock')"><img src="agents/deadlock.png" alt="Deadlock"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-fade" onclick="selectAgent('fade')"><img src="agents/fade.png" alt="Fade"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-kayo" onclick="selectAgent('kayo')"><img src="agents/kayo.png" alt="Kayo"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-killjoy" onclick="selectAgent('killjoy')"><img src="agents/killjoy.png" alt="Killjoy"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-miks" onclick="selectAgent('miks')"><img src="agents/miks.png" alt="Miks"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-sova" onclick="selectAgent('sova')"><img src="agents/sova.png" alt="Sova"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-veto" onclick="selectAgent('veto')"><img src="agents/veto.png" alt="Veto"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-viper" onclick="selectAgent('viper')"><img src="agents/viper.png" alt="Viper"></div>
+                <div class="dash-btn agent-btn" id="btn-agent-vyse" onclick="selectAgent('vyse')"><img src="agents/vyse.png" alt="Vyse"></div>
             </div>
+
+        </aside>
+
+        <!-- RIGHT MAIN VIEWER -->
+        <main class="dashboard-viewer">
             
-            <div class="viewer-layout">
+            <h2 id="viewer-title" class="viewer-header-title">SELECT A MAP AND AGENT</h2>
+            
+            <!-- Placeholder before selecting both -->
+            <div id="placeholder-text" class="placeholder-text">
+                Please select both a Map and an Agent from the sidebar to view lineups.
+            </div>
+
+            <!-- The Actual Viewer (Hidden until both map and agent are clicked) -->
+            <div id="viewer-layout" class="viewer-layout" style="display: none;">
+                
+                <!-- Map Area -->
                 <div class="map-layout-container">
                     <div class="map-relative-wrapper">
                         <img id="current-map-layout" src="" alt="Map Layout" onclick="getMapCoordinates(event)">
@@ -101,13 +82,16 @@
                     </div>
                 </div>
                 
+                <!-- Video & Details Area -->
                 <div id="lineup-details" class="lineup-info">
                     <h3 id="panel-title" data-text="lineupGuideTitle">Map Guide</h3>
                     <p id="panel-desc" data-text="lineupGuideDesc"></p>
                     <div id="video-container"></div>
                 </div>
+
             </div>
-        </div>
+
+        </main>
 
     </div>
 
@@ -131,7 +115,8 @@
                 const selectedLineup = lineupsData.find(l => l.id === lineupId);
                 
                 if (selectedLineup) {
-                    selectMap(selectedLineup.map, '');
+                    // Auto-select in the new dashboard
+                    selectMap(selectedLineup.map);
                     selectAgent(selectedLineup.agent);
                     
                     setTimeout(() => {
@@ -144,41 +129,50 @@
                             if(targetPin) targetPin.click();
                             
                             originPin.click();
-                            document.getElementById('viewer-section').scrollIntoView({ behavior: 'smooth' });
+                            // Clear URL so it doesn't refresh automatically next time
+                            window.history.replaceState({}, document.title, window.location.pathname);
                         }
                     }, 100);
                 }
             }
         };
 
-        function selectMap(mapName, bgImage) {
+        function selectMap(mapName) {
             currentMap = mapName;
-            document.getElementById('map-selection').style.display = 'none';
-            document.getElementById('agent-selection').style.display = 'block';
-            document.getElementById('selected-map-title').innerText = `${mapName.toUpperCase()} - ${siteTexts.lineupSelectAgent}`; 
-        }
+            
+            // Remove active class from all map buttons, then add to the clicked one
+            document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-map-${mapName}`).classList.add('active');
 
-        function showMaps() {
-            document.getElementById('map-selection').style.display = 'block';
-            document.getElementById('agent-selection').style.display = 'none';
+            checkAndRender();
         }
 
         function selectAgent(agentName) {
             currentAgent = agentName;
-            document.getElementById('agent-selection').style.display = 'none';
-            document.getElementById('viewer-section').style.display = 'block';
             
-            document.getElementById('current-map-layout').src = `maps/${currentMap}.png`;
-            document.getElementById('viewer-title').innerText = `${currentMap.toUpperCase()} - ${currentAgent.toUpperCase()}`;
-            
-            resetViewerPanel();
-            renderPins();
+            // Remove active class from all agent buttons, then add to the clicked one
+            document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-agent-${agentName}`).classList.add('active');
+
+            checkAndRender();
         }
 
-        function showAgents() {
-            document.getElementById('agent-selection').style.display = 'block';
-            document.getElementById('viewer-section').style.display = 'none';
-            window.history.replaceState({}, document.title, window.location.pathname);
+        function checkAndRender() {
+            // Only show the viewer if BOTH are selected
+            if (currentMap !== "" && currentAgent !== "") {
+                document.getElementById('placeholder-text').style.display = 'none';
+                document.getElementById('viewer-layout').style.display = 'flex';
+                
+                document.getElementById('current-map-layout').src = `maps/${currentMap}.png`;
+                document.getElementById('viewer-title').innerText = `${currentMap.toUpperCase()} - ${currentAgent.toUpperCase()}`;
+                
+                resetViewerPanel();
+                renderPins();
+            } else if (currentMap !== "") {
+                document.getElementById('viewer-title').innerText = `${currentMap.toUpperCase()} - SELECT AGENT`;
+            } else if (currentAgent !== "") {
+                document.getElementById('viewer-title').innerText = `SELECT MAP - ${currentAgent.toUpperCase()}`;
+            }
         }
 
         function resetViewerPanel() {
@@ -261,7 +255,6 @@
             document.getElementById('video-container').innerHTML = "";
         }
 
-        // --- NEW YOUTUBE LOGIC ---
         function getYouTubeEmbedUrl(url) {
             if (!url) return "";
             let videoId = "";
@@ -270,7 +263,7 @@
             } else if (url.includes("youtu.be/")) {
                 videoId = url.split("youtu.be/")[1].split("?")[0];
             } else if (url.includes("youtube.com/embed/")) {
-                return url; // It's already an embed link
+                return url; 
             }
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
@@ -281,7 +274,6 @@
             
             if (lineup.vid) {
                 const embedUrl = getYouTubeEmbedUrl(lineup.vid);
-                // We use an iframe now instead of a video tag, wrapped in the new CSS class
                 document.getElementById('video-container').innerHTML = `
                     <div class="video-wrapper">
                         <iframe 
