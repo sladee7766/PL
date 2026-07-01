@@ -33,7 +33,6 @@
         <div class="submit-container">
             <form id="submitForm" onsubmit="handleSubmission(event)">
                 
-                <!-- Submission Type -->
                 <div class="form-group">
                     <label for="type" data-text="submitLabelType">Submission Type</label>
                     <select id="type" class="form-control" required>
@@ -45,40 +44,32 @@
                     </select>
                 </div>
 
-                <!-- Username -->
                 <div class="form-group">
                     <label for="username" data-text="submitLabelUser">Username</label>
                     <input type="text" id="username" class="form-control" placeholder="Your name or Discord tag" required>
                 </div>
 
-                <!-- Title -->
                 <div class="form-group">
                     <label for="title" data-text="submitLabelTitle">Title</label>
                     <input type="text" id="title" class="form-control" placeholder="E.g. Sova Haven Recon Lineup" required>
                 </div>
 
-                <!-- Description -->
                 <div class="form-group">
                     <label for="desc" data-text="submitLabelDesc">Description</label>
                     <textarea id="desc" class="form-control" placeholder="Explain the lineup, bug, or addition..." required></textarea>
                 </div>
 
-                <!-- Video / Link -->
                 <div class="form-group">
                     <label for="video" data-text="submitLabelVideo">Video / Image Link</label>
                     <input type="url" id="video" class="form-control" placeholder="https://youtube.com/... or https://imgur.com/... (Optional)">
                 </div>
 
-                <!-- Privacy Checkbox -->
                 <div class="form-group checkbox-group">
                     <input type="checkbox" id="privacyCheck" required>
                     <label for="privacyCheck" data-text="submitLabelCheck">I agree that my submitted data and IP address will be transferred and stored.</label>
                 </div>
 
-                <!-- Submit Button -->
                 <button type="submit" id="submitBtn" class="submit-btn" data-text="submitBtn">Send Submission</button>
-
-                <!-- Alert Box -->
                 <div id="alertBox" class="alert-box"></div>
             </form>
         </div>
@@ -88,23 +79,21 @@
         BETA 1.0.0
     </footer>
 
-    <!-- Logic to talk to your new Cloudflare Worker Securely -->
+    <!-- Logic to talk to your Cloudflare Worker Securely -->
     <script>
-        // 🛑 PASTE YOUR CLOUDFLARE WORKER URL HERE 🛑
+        // ✅ YOUR EXACT CLOUDFLARE WORKER URL
         const WORKER_URL = "https://lineups-submit.skulled4545.workers.dev/submit";
 
         async function handleSubmission(event) {
-            event.preventDefault(); // Prevents the page from refreshing
+            event.preventDefault(); 
 
             const btn = document.getElementById('submitBtn');
             const alertBox = document.getElementById('alertBox');
             
-            // Disable button to prevent spam clicking
             btn.disabled = true;
             btn.innerText = "Processing...";
             alertBox.style.display = "none";
 
-            // 1. Gather Form Data
             const formData = {
                 type: document.getElementById('type').value,
                 username: document.getElementById('username').value,
@@ -113,12 +102,7 @@
                 video: document.getElementById('video').value
             };
 
-            // 2. Send Data SECURELY to the Middleman (Cloudflare)
             try {
-                if (WORKER_URL === "https://YOUR_WORKER_NAME.YOUR_SUBDOMAIN.workers.dev") {
-                    throw new Error("You forgot to paste your Cloudflare Worker URL in the code!");
-                }
-
                 const response = await fetch(WORKER_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -127,22 +111,19 @@
 
                 if (!response.ok) throw new Error('Failed to send data to server');
                 
-                // 3. Show Success message
                 alertBox.className = "alert-box alert-success";
-                alertBox.innerText = siteTexts.submitSuccess; // Text from config.js
+                alertBox.innerText = siteTexts.submitSuccess; 
                 alertBox.style.display = "block";
                 
-                // Clear the form
                 document.getElementById('submitForm').reset();
 
             } catch (error) {
                 console.error(error);
                 alertBox.className = "alert-box alert-error";
-                alertBox.innerText = error.message.includes("forgot") ? error.message : siteTexts.submitError;
+                alertBox.innerText = siteTexts.submitError;
                 alertBox.style.display = "block";
             }
 
-            // Restore Button
             btn.disabled = false;
             btn.innerText = siteTexts.submitBtn;
         }
