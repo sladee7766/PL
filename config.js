@@ -1,11 +1,11 @@
 const siteTexts = {
     // Navigation Bar
     navLineups: "Lineups",
+    navFavorites: "Favorites",
     navCrosshairs: "Crosshairs",
     navNews: "News",
     navVideos: "Videos",
     navSubmit: "Submit",
-    navFavorites: "Favorites", // NEW
 
     // Home Page
     homeLineupsTitle: "Latest Lineups",
@@ -14,8 +14,8 @@ const siteTexts = {
     homeVideosTitle: "Latest Videos",
 
     // Favorites Page
-    favoritesTitle: "My Saved Lineups", // NEW
-    favoritesEmpty: "You haven't saved any lineups yet. Go click some hearts!", // NEW
+    favoritesTitle: "My Saved Lineups",
+    favoritesEmpty: "You haven't saved any lineups yet. Go click some hearts!",
 
     // Crosshairs Page
     crosshairsTitle: "Pro & Community Crosshairs",
@@ -58,7 +58,6 @@ const siteTexts = {
     footerText: "BETA 1.0.0"
 };
 
-// Auto-Translate Engine
 document.addEventListener("DOMContentLoaded", () => {
     const elements = document.querySelectorAll("[data-text]");
     elements.forEach(el => {
@@ -73,27 +72,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ==========================================
 // GLOBAL FAVORITES ENGINE
-// ==========================================
 window.toggleFavorite = function(id, event, element) {
-    if (event) event.stopPropagation(); // Stops the card from clicking when you click the heart
+    if (event) event.stopPropagation(); // Stops the card from being clicked when you click the heart
     
     let favs = JSON.parse(localStorage.getItem('lineup_favs') || '[]');
     
     if (favs.includes(id)) {
-        favs = favs.filter(f => f !== id); // Remove it
+        favs = favs.filter(f => f !== id); 
         if (element) element.innerText = '🤍';
     } else {
-        favs.push(id); // Add it
+        favs.push(id); 
         if (element) element.innerText = '💛';
     }
     
     localStorage.setItem('lineup_favs', JSON.stringify(favs));
     
-    // If we are on the favorites page, reload it so the removed card disappears
     if (window.location.pathname.includes("favorites.html")) {
-        location.reload();
+        location.reload(); // Reload the favorites page to update the list
     }
 };
 
