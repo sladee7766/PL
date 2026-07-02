@@ -25,7 +25,6 @@
             <a href="submit.html" data-text="navSubmit">Submit</a>
         </div>
         
-        <!-- Search Bar (Only on this page) -->
         <div class="search-container">
             <input type="text" id="lineup-search" placeholder="Search lineups (e.g. Sova Haven)..." onkeyup="handleSearch()">
             <div id="search-results" class="search-results"></div>
@@ -35,7 +34,6 @@
     <!-- DASHBOARD LAYOUT -->
     <div class="dashboard-layout">
         
-        <!-- LEFT SIDEBAR -->
         <aside class="dashboard-sidebar">
             <h3 class="sidebar-title" data-text="lineupSelectMap">Select a Map</h3>
             <div class="sidebar-grid">
@@ -64,7 +62,6 @@
             </div>
         </aside>
 
-        <!-- RIGHT MAIN VIEWER -->
         <main class="dashboard-viewer">
             <h2 id="viewer-title" class="viewer-header-title">SELECT A MAP AND AGENT</h2>
             
@@ -88,6 +85,17 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- NEW: SECRET DEV CONSOLE -->
+    <div id="dev-console" class="dev-console">
+        <h4>🛠️ Dev Console</h4>
+        <p>1. <b>Shift + Click</b> to set Target (Gold)<br>2. <b>Alt + Click</b> to set Origins (Green)</p>
+        <textarea id="dev-output" readonly></textarea>
+        <div class="dev-btn-group">
+            <button class="dev-btn" onclick="copyDevCode()">Copy</button>
+            <button class="dev-btn dev-btn-reset" onclick="resetDevConsole()">Clear</button>
+        </div>
     </div>
 
     <footer class="beta-footer" data-text="footerText">
@@ -344,15 +352,97 @@
 
         function clearLines() { document.getElementById('lineup-svg').innerHTML = ""; }
 
-        function getMapCoordinates(event) {
-            if (event.shiftKey) {
-                const img = event.target;
-                const rect = img.getBoundingClientRect();
-                const x = ((event.clientX - rect.left) / rect.width) * 100;
-                const y = ((event.clientY - rect.top) / rect.height) * 100;
-                alert(`Lineup Coordinates (Check Console to copy!)\n\n[${x.toFixed(2)}, ${y.toFixed(2)}]`);
-                console.log(`New Lineup Coordinates -> [${x.toFixed(2)}, ${y.toFixed(2)}]`);
+        // ==========================================
+        // NEW: SECRET DEV CONSOLE LOGIC
+        // ==========================================
+        let devTarget = null;
+        let devOrigins = [];
+
+        document.addEventListener('keydown', (e) => {
+            // Press Ctrl + Shift + D to open the console
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+                const consoleBox = document.getElementById('dev-console');
+                consoleBox.style.display = consoleBox.style.display === 'flex' ? 'none' : 'flex';
             }
+        });
+
+        function getMapCoordinates(event) {
+            const consoleBox = document.getElementById('dev-console');
+            
+            if (consoleBox.style.display === 'flex') {
+                // If console is open, write code!
+                const rect = event.target.getBoundingClientRect();
+                const x = (((event.clientX - rect.left) / rect.width) * 100).toFixed(2);
+                const y = (((event.clientY - rect.top) / rect.height) * 100).toFixed(2);
+                
+                if (event.shiftKey) {
+                    devTarget = [x, y];
+                } else if (event.altKey) {
+                    devOrigins.push([x, y]);
+                }
+                updateDevOutput();
+            } else if (event.shiftKey) {
+                // Normal fallback
+                const rect = event.target.getBoundingClientRect();
+                const x = (((event.clientX - rect.left) / rect.width) * 100).toFixed(2);
+                const y = (((event.clientY - rect.top) / rect.height) * 100).toFixed(2);
+                alert(`Lineup Coordinates (Check Console to copy!)\n\n[${x}, ${y}]`);
+                console.log(`New Lineup Coordinates -> [${x}, ${y}]`);
+            }
+        }
+
+        function updateDevOutput() {
+            let output = "";
+            const tempId = currentMap && currentAgent ? `${currentMap}-${currentAgent}-X` : "map-agent-1";
+            const mapName = currentMap || "map";
+            const agentName = currentAgent || "agent";
+            
+            if (!devTarget && devOrigins.length === 0) {
+                output = "Awaiting Shift+Click (Target) or Alt+Click (Origin)...";
+            } else {
+                devOrigins.forEach((origin, idx) => {
+                    output += `{
+    id: "${tempId.replace('X', idx + 1)}",
+    title: "New Lineup ${idx + 1}",
+    agent: "${agentName}",
+    map: "${mapName}",
+    image: "map_backgrounds/${mapName}.jpg",
+    target: [${devTarget ? devTarget.join(', ') : "0.00, 0.00"}],
+    origin: [${origin.join(', ')}],
+    desc: "Description here.",
+    vid: "YOUTUBE_LINK"
+},\n`;
+                });
+                
+                // If they only set target but no origins yet
+                if (devTarget && devOrigins.length === 0) {
+                    output = `{
+    id: "${tempId}",
+    title: "New Lineup",
+    agent: "${agentName}",
+    map: "${mapName}",
+    image: "map_backgrounds/${mapName}.jpg",
+    target: [${devTarget.join(', ')}],
+    origin: [0.00, 0.00],
+    desc: "Description here.",
+    vid: "YOUTUBE_LINK"
+},`;
+                }
+            }
+            document.getElementById('dev-output').value = output;
+        }
+
+        function copyDevCode() {
+            const out = document.getElementById('dev-output');
+            out.select();
+            document.execCommand('copy');
+            alert("Dev Code Copied to Clipboard!");
+        }
+
+        function resetDevConsole() {
+            devTarget = null;
+            devOrigins = [];
+            updateDevOutput();
         }
     </script>
 </body>
