@@ -12,7 +12,6 @@
 </head>
 <body>
     
-    <!-- Top Bar -->
     <div class="top-bar">
         <a href="index.html" class="logo-link">
             <img src="foto/logo.png" alt="Website Logo" class="logo">
@@ -26,14 +25,14 @@
             <a href="submit.html" data-text="navSubmit">Submit</a>
         </div>
         
-        <!-- NEW: Search Bar (Only on this page) -->
+        <!-- Search Bar (Only on this page) -->
         <div class="search-container">
             <input type="text" id="lineup-search" placeholder="Search lineups (e.g. Sova Haven)..." onkeyup="handleSearch()">
             <div id="search-results" class="search-results"></div>
         </div>
     </div>
 
-    <!-- NEW DASHBOARD LAYOUT -->
+    <!-- DASHBOARD LAYOUT -->
     <div class="dashboard-layout">
         
         <!-- LEFT SIDEBAR -->
@@ -102,7 +101,6 @@
         let activeGroupIndex = null;
         let currentGroups = []; 
 
-        // Extract the loading logic so the Search Bar can use it too!
         function loadLineupById(lineupId) {
             const selectedLineup = lineupsData.find(l => l.id === lineupId);
             if (selectedLineup) {
@@ -133,7 +131,6 @@
             }
         };
 
-        // NEW: Search Bar Logic
         function handleSearch() {
             const query = document.getElementById('lineup-search').value.toLowerCase();
             const resultsBox = document.getElementById('search-results');
@@ -144,7 +141,6 @@
                 return; 
             }
 
-            // Look for matching map, agent, or title
             const matches = lineupsData.filter(l => 
                 l.title.toLowerCase().includes(query) || 
                 l.agent.toLowerCase().includes(query) || 
@@ -159,13 +155,11 @@
 
             resultsBox.style.display = 'block';
             
-            // Show top 5 matches
             matches.slice(0, 5).forEach(l => {
                 const div = document.createElement('div');
                 div.className = 'search-item';
                 div.innerText = `${l.agent.toUpperCase()} ${l.map.toUpperCase()} - ${l.title}`;
                 
-                // When clicked, clear search and load lineup!
                 div.onclick = () => {
                     document.getElementById('lineup-search').value = '';
                     resultsBox.style.display = 'none';
@@ -175,25 +169,25 @@
             });
         }
 
-        // Close search dropdown if clicked outside
         document.addEventListener('click', (e) => {
             if(!e.target.closest('.search-container')) {
                 document.getElementById('search-results').style.display = 'none';
             }
         });
 
-        // Dashboard logic
         function selectMap(mapName) {
             currentMap = mapName;
             document.querySelectorAll('.map-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-map-${mapName}`).classList.add('active');
+            const btn = document.getElementById(`btn-map-${mapName}`);
+            if(btn) btn.classList.add('active');
             checkAndRender();
         }
 
         function selectAgent(agentName) {
             currentAgent = agentName;
             document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-agent-${agentName}`).classList.add('active');
+            const btn = document.getElementById(`btn-agent-${agentName}`);
+            if(btn) btn.classList.add('active');
             checkAndRender();
         }
 
@@ -303,7 +297,6 @@
             return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
         }
 
-        // NEW: Display the Favorite Heart directly next to the Title when viewing!
         function handleOriginClick(lineup) {
             const heartIcon = isFavorite(lineup.id) ? '💛' : '🤍';
             
@@ -322,7 +315,7 @@
                     </div>
                 `;
             } else {
-                document.getElementById('video-container').innerHTML = `<p style="color:red;">${siteTexts.lineupNoVideo}</p>`;
+                document.getElementById('video-container').innerHTML = `<p style="color:red; margin-top:20px;">${siteTexts.lineupNoVideo}</p>`;
             }
         }
 
